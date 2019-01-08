@@ -1,0 +1,22 @@
+{
+  "name": "training-project-connector",
+  "version": "0.0.1",
+  "description": "",
+  "dependencies": {
+    "@mobify/commerce-integrations": "1.0.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -R dist; ../../node_modules/.bin/babel src --bail --ignore '*.test.js','test.js' --out-dir dist --copy-files",
+    "start": "npm run build -- --watch",
+    "prepare": "npm run build;",
+    "test": "../../node_modules/.bin/jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true
+}

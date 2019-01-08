@@ -1,0 +1,101 @@
+// Example Product Details
+// ===
+
+.t-example-product-details__overview {
+    @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+        display: flex;
+    }
+}
+
+.t-example-product-details__carousel {
+    margin-right: -(gutter());
+    margin-bottom: $unit;
+    margin-left: -(gutter());
+
+    @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+        flex-basis: span(7);
+        margin-right: gutter() * 2;
+    }
+    @include susy-breakpoint($large-breakpoint, $large-layout) {
+        margin-right: gutter();
+        margin-left: 0;
+    }
+    @include susy-breakpoint($xlarge-breakpoint, $large-layout) {
+        flex-basis: span(8);
+    }
+
+    .pw-carousel__controls {
+        position: absolute;
+        top: 50%;
+
+        width: 100%;
+
+        transform: translateY(-50%);
+    }
+
+    .pw-carousel__pip {
+        display: none;
+    }
+}
+
+.t-example-product-details__info {
+    @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+        flex-basis: span(5);
+    }
+    @include susy-breakpoint($xlarge-breakpoint, $large-layout) {
+        flex-basis: span(4);
+    }
+}
+
+
+// Breadcrumbs
+// ---
+
+.t-example-product-details__breadcrumbs {
+    margin-top: $unit;
+    margin-bottom: $unit;
+}
+
+
+// Description
+// ---
+//
+// 1. Provide context for absolutely positioned swatch
+// 2. Make sure the background covers the entire swatch
+// 3.  Make sure swatch fills the entire swatch container
+
+.t-example-product-details__price {
+    font-family: $header-font-family;
+    font-weight: $semi-bold-font-weight;
+    font-size: $big-font-size;
+    line-height: $huge-line-height;
+}
+
+.t-example-product-details__swatch {
+    position: relative; // 1
+
+    line-height: 0; // 2
+}
+
+.t-example-product-details__swatch-background {
+    position: absolute; // 3
+
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    background-repeat: repeat;
+}
+
+
+// Shipping and Delivery Information Modal Content
+// ---
+
+.t-example-product-details__shipping-delivery-modal-content {
+    padding: $unit*1.5;
+    padding-bottom: 100px;
+
+    @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+        padding-bottom: 120px;
+    }
+}

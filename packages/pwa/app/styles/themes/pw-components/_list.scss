@@ -1,0 +1,16 @@
+// List Theme
+// ===
+
+.pw-list {
+    > :not(:first-of-type),
+    > .pw-list-tile:not(:first-of-type) {
+        border-top: 1px solid $neutral-15;
+    }
+
+    &.pw--borderless {
+        > :not(:first-of-type) {
+            margin-top: $unit;
+            border-top: 0;
+        }
+    }
+}

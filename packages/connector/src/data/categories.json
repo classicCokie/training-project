@@ -1,0 +1,20 @@
+{
+    "root": {
+        "id": "root",
+        "name": "Storefront Catalog - EN",
+        "categories": [
+            {
+                "id": "all",
+                "name": "All",
+                "description": "Hard-wearing boots, jackets and clothing for unbeatable comfort day in, day out. Practical, easy-to-wear styles wherever you're headed.",
+                "categories": [
+                    {
+                        "id": "tshirts",
+                        "name": "T-Shirts",
+                        "description": "Practical, easy-to-wear styles wherever you're headed."
+                    }
+                ]
+            }
+        ]
+    }
+}

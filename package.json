@@ -1,0 +1,47 @@
+{
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.1",
+    "babel-jest": "^22.4.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "bluebird": "^3.5.1",
+    "eslint": "^4.19.1",
+    "eslint-import-resolver-webpack": "^0.10.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^7.8.2",
+    "fetch-vcr": "^1.1.1",
+    "jest": "^22.4.3",
+    "jsdoc": "^3.5.5",
+    "jsdom": "^11.6.2",
+    "killable": "^1.0.0",
+    "lerna": "^3.5.1",
+    "mobify-code-style": "^2.8.4",
+    "nock": "^10.0.0",
+    "prettier": "^1.15.2",
+    "prismjs": "^1.15.0",
+    "react-test-renderer": "^16.3.2",
+    "redux-thunk": "^2.2.0",
+    "regenerator-runtime": "^0.11.1",
+    "semver": "^5.6.0",
+    "sinon": "^4.5.0"
+  },
+  "engines": {
+    "node": ">=8.10.0",
+    "npm": ">=5.7.1"
+  },
+  "scripts": {
+    "postinstall": "./scripts/check-version.js && ./scripts/bootstrap.js",
+    "lerna": "lerna",
+    "pretest": "npm run lint",
+    "test": "lerna run test",
+    "test:integration": "TEST_TYPE=integration npm run test",
+    "test:e2e": "lerna run --stream test:e2e",
+    "lint": "lerna run --parallel --stream lint",
+    "lint:fix": "lerna run lint:fix",
+    "format": "npm run lerna -- exec --parallel 'prettier --write \"**/*.js\"'"
+  }
+}

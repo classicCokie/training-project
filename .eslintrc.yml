@@ -1,0 +1,14 @@
+extends:
+  - './node_modules/mobify-code-style/es6/mobify-es6.yml'
+  - 'plugin:react/recommended'
+env:
+  node: true
+  jest: true
+parser: 'babel-eslint'
+rules:
+  indent: 'off'
+  new-cap: 'off'
+  import/no-extraneous-dependencies: 'off'
+parserOptions:
+  ecmaFeatures:
+    experimentalObjectRestSpread: true

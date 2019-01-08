@@ -1,0 +1,115 @@
+// Search Theme
+// ===
+
+.pw-search {
+    color: $font-color;
+}
+
+// Overlay Modifier
+// ---
+//
+// 1. Move button away from edge
+
+.pw-search.pw--is-overlay {
+    .pw-search__inner {
+        transition: 0.2s transform ease-out;
+    }
+
+    .pw-search__bar {
+        padding-right: $unit; // 1
+    }
+}
+
+
+// Search Inner
+// ---
+//
+// 1. Ensure search bar is above site's fixed header
+
+.pw-search__inner {
+    z-index: $z2-depth + 1; // 1
+}
+
+
+// Search Form
+// ---
+
+.pw-search__form {
+    position: relative;
+    z-index: $z1-depth + 1;
+}
+
+
+// Search Icon
+// ---
+
+.pw-search__icon {
+    display: none;
+}
+
+
+// Search Input Field
+// ---
+//
+// 1. Override iOS styles
+
+.pw-search__input {
+    min-height: $header-height;
+    padding: $unit*1.5;
+    border: 0;
+
+    @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+        min-height: auto;
+    }
+
+    &[type] {
+        box-shadow: none; // 1
+    }
+}
+
+
+// Submit
+// ---
+
+.pw-search__button-submit {
+    order: 2;
+}
+
+
+// Search Suggestions
+// ---
+
+.pw-search__suggestions {
+    background: $neutral-00;
+}
+
+
+// Search Suggestion Heading
+// ---
+
+.pw-search__suggestion-heading {
+    position: absolute;
+
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    border: 0;
+}
+
+
+// Search Suggestion
+// ---
+
+.pw-search__suggestion + .pw-search__suggestion {
+    border-top: $border;
+}
+
+
+// Search Shade
+// ---
+
+.pw-search__shade {
+    background: rgba(0, 0, 0, 0.5);
+}

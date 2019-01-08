@@ -1,0 +1,74 @@
+// Example Header
+// ===
+//
+// 1. This is set to allow for absolute position of the c-header__title
+// 2. To keep the content in the center when at max-width
+// 3. To set the title absolute in the center of the header
+
+.c-header {
+    position: relative; // 1
+
+    background-color: $ui-brand-color;
+
+    @include susy-breakpoint($large-breakpoint, $large-layout) {
+        justify-content: center; // 2
+    }
+}
+
+.c-header__sheet {
+    @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+        .pw-sheet__mask,
+        .pw-sheet__inner {
+            margin-top: 74px;
+        }
+
+        .pw-sheet__wrapper {
+            box-shadow: none;
+        }
+    }
+}
+
+.c-header__content {
+    width: 100%;
+    max-width: $max-width;
+}
+
+.c-header__title {
+    position: absolute; // 3
+    left: 50%;
+
+    transform: translateX(-50%);
+}
+
+.c-header__nav-modal {
+    position: relative;
+
+    background-color: $ui-brand-color;
+
+    .u-home-headerbar {
+        align-items: center;
+        width: 100%;
+        padding-top: $unit * 1.5;
+        padding-bottom: $unit / 2;
+        padding-left: $unit * 2;
+    }
+
+
+    .c-header__nav-modal-mobile {
+        justify-content: flex-end;
+        flex: 0 0 100%;
+    }
+}
+
+.c-header__navigation {
+    @include susy-breakpoint($large-breakpoint, $large-layout) {
+        .pw-mega-menu-item.pw--depth-1,
+        .pw-mega-menu-item.pw--depth-2 {
+            max-width: $max-width;
+            margin: 0 auto;
+        }
+    }
+    @include susy-breakpoint(959px, $large-layout) {
+        height: 1000px;
+    }
+}

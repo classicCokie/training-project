@@ -1,0 +1,59 @@
+// Example Product List
+// -----------------
+//
+// 1. Remove the gutter on the last item
+// 2. To ensure product name and price are top aligned for those with different
+//    image sizes within the same row
+
+.t-example-plp__container {
+    .t-example-plp__container-items {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        @include container();
+    }
+}
+
+.t-example-plp__products-items {
+    width: span(2);
+    margin-right: gutter();
+    margin-bottom: $unit * 2;
+
+    @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+        width: span(4);
+
+        &:nth-child(2n) {
+            margin-right: gutter();
+        }
+
+        &:nth-child(3n) {
+            margin-right: 0;
+        }
+    }
+    @include susy-breakpoint($large-breakpoint, $large-layout) {
+        width: span(3);
+        margin-right: gutter();
+
+        &:nth-child(1n),
+        &:nth-child(3n) {
+            margin-right: gutter();
+        }
+
+        &:nth-child(4n) {
+            margin-right: 0;
+        }
+    }
+
+    &:nth-child(2n) {
+        margin-right: 0; // 1
+    }
+
+    .pw-tile__primary {
+        margin-right: 0;
+    }
+
+    .pw-tile__info {
+        height: auto; // 2
+    }
+}

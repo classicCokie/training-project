@@ -1,0 +1,18 @@
+root: true
+parser: "babel-eslint"
+env:
+  jest: true
+extends:
+  - './node_modules/mobify-code-style/es6/mobify-es6-react-a11y.yml'
+settings:
+  import/resolver:
+    webpack:
+      config: './webpack/webpack.config.js'
+  import/extensions: ['.js', '.jsx']
+rules:
+  react/react-in-jsx-scope: error
+  react/prefer-stateless-function:
+  - error
+  - ignorePureComponents: true
+globals:
+  process: false

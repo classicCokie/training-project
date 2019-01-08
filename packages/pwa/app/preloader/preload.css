@@ -1,0 +1,37 @@
+/*
+This file will be minified and auto-prefixed, there's no need to add
+browser-prefixes
+*/
+
+/* Animation spin for pre-loader Mobify logo*/
+
+.preloader__logo {
+	-webkit-animation: spin 1s infinite;
+}
+
+@-webkit-keyframes spin {
+	0% {
+		transform: rotate(360deg)
+	}
+	100% {
+		transform: rotate(0)
+	}
+}
+
+@-moz-keyframes spin {
+    0% {
+		transform: rotate(360deg)
+	}
+	100% {
+		transform: rotate(0)
+	}
+}
+
+@keyframes spin {
+    0% {
+		transform: rotate(360deg)
+	}
+	100% {
+		transform: rotate(0)
+	}
+}
