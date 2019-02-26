@@ -1,0 +1,38 @@
+setupMachine: &setupMachine
+  name: Setup Machine
+  command: |
+      # Add Chrome to apt sources
+      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+      sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+
+      # Install system dependencies
+      sudo apt-get update
+      sudo apt-get install python-dev python-pip google-chrome-stable
+      sudo pip install awscli
+      sudo npm install -g npm@5.7.1
+
+      # Add NPM token to allow publishing from Circle
+      echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+
+      # Install node dependencies
+      npm ci
+
+      # Add credentials file at ~/.mobify so we can upload to Mobify Cloud
+      npm run save-credentials --prefix packages/pwa -- --user "${MOBIFY_CLIENT_USER}" --key "${MOBIFY_CLIENT_API_KEY}"
+
+
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:8.10.0-browsers
+    steps:
+      - checkout
+      - run:
+          <<: *setupMachine
+          
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
