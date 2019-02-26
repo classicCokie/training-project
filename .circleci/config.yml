@@ -15,7 +15,7 @@ setupMachine: &setupMachine
       echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
 
       # Install node dependencies
-      npm ci
+      npm install
 
       # Add credentials file at ~/.mobify so we can upload to Mobify Cloud
       npm run save-credentials --prefix packages/pwa -- --user "${MOBIFY_CLIENT_USER}" --key "${MOBIFY_CLIENT_API_KEY}"
@@ -30,7 +30,7 @@ jobs:
       - checkout
       - run:
           <<: *setupMachine
-          
+
 workflows:
   version: 2
   test:
