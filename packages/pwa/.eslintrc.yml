@@ -2,8 +2,6 @@ root: true
 parser: "babel-eslint"
 env:
   jest: true
-extends:
-  - './node_modules/mobify-code-style/es6/mobify-es6-react-a11y.yml'
 settings:
   import/resolver:
     webpack:
