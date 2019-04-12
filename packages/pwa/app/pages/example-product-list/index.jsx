@@ -6,6 +6,7 @@ import {createPropsSelector} from 'reselect-immutable-helpers'
 import MediaQuery from '../../components/media-query'
 import PropTypes from 'prop-types'
 import stringify from 'json-stable-stringify'
+import Helmet from 'react-helmet'
 
 import * as actions from './actions'
 import * as selectors from './selectors'
@@ -15,17 +16,16 @@ import {VIEWPORT_SIZE_NAMES as sizes} from 'progressive-web-sdk/dist/ssr/constan
 
 import Breadcrumbs from 'progressive-web-sdk/dist/components/breadcrumbs'
 import Divider from 'progressive-web-sdk/dist/components/divider'
+import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
 import Tile from 'progressive-web-sdk/dist/components/tile'
 import SkeletonBlock from 'progressive-web-sdk/dist/components/skeleton-block'
 import SkeletonText from 'progressive-web-sdk/dist/components/skeleton-text'
 
-
 const breakpoints = getBreakpoints()
-
+const PRODUCT_SKELETON_COUNT = 6
 
 class ExampleProductList extends React.Component {
-
     constructor(props) {
         super(props)
         this.pageType = 'exampleProductList'
@@ -52,7 +52,7 @@ class ExampleProductList extends React.Component {
         if (props === null) {
             return {}
         } else {
-            const {categoryId} = (props.params || {})
+            const {categoryId} = props.params || {}
             return {filters: {categoryId}, query: ''}
         }
     }
@@ -61,67 +61,112 @@ class ExampleProductList extends React.Component {
         const {breadcrumb, category, errorMessage, productSearch} = this.props
 
         const productPriceState = (price) => {
-            return (price % 1 === 0) ? (price = `$${price}.00`) : `$${price}`
+            return price % 1 === 0 ? (price = `$${price}.00`) : `$${price}`
         }
 
         const contentsLoaded = !!productSearch
 
         return (
-            errorMessage ?
-                <h1 className="u-margin-top-lg u-margin-center">{errorMessage}</h1>
-                :
-                <Fragment>
-                    <Breadcrumbs className="u-margin-top-lg u-margin-bottom-lg" items={breadcrumb} includeMicroData />
-                    {category ?
-                        <h1 className="u-margin-bottom-lg">{category.name}</h1> :
-                        <SkeletonText type="h1" width="50%" />
-                    }
-                    <MediaQuery minWidth={breakpoints[sizes.LARGE]}>
-                        <Divider className="u-margin-bottom-md" />
-                    </MediaQuery>
-                    <div className="t-example-plp__container">
-                        <div className="t-example-plp__container-items">
-                            {contentsLoaded ?
-                                <Fragment>
-                                    {productSearch.results.length > 0 &&
-                                        productSearch.results.map((productSearchResult, idx) => (
+            <div className="t-example-product-plp">
+                <Breadcrumbs
+                    className="u-margin-top-lg u-margin-bottom-lg"
+                    items={breadcrumb}
+                    includeMicroData
+                />
+                {category ? (
+                    <Fragment>
+                        <h1 className="u-margin-bottom-lg">{category.name}</h1>
+                        <Helmet>
+                            {/* PLACE META DATA INFORMATION HERE */}
+                            <meta name="description" content={category.description} />
+                        </Helmet>
+                    </Fragment>
+                ) : (
+                    <SkeletonText type="h1" width="50%" />
+                )}
+                <MediaQuery minWidth={breakpoints[sizes.LARGE]}>
+                    <Divider className="u-margin-bottom-md" />
+                </MediaQuery>
+                <div className="t-example-plp__container">
+                    {errorMessage && (
+                        <h1 className="u-margin-top-lg u-margin-center t-example-plp__error-msg">
+                            {errorMessage}
+                        </h1>
+                    )}
+                    <div className="t-example-plp__container-items">
+                        {contentsLoaded ? (
+                            <Fragment>
+                                {productSearch.results.length > 0 &&
+                                    productSearch.results.map((productSearchResult) => (
+                                        <div
+                                            className="t-example-plp__products-items"
+                                            key={productSearchResult.productId}
+                                        >
                                             <Tile
-                                                className="t-example-plp__products-items"
-                                                key={productSearchResult.productId ? productSearchResult.productId : idx}
                                                 isColumn
                                                 imageProps={{
                                                     src: productSearchResult.defaultImage.src,
-                                                    alt: productSearchResult.defaultImage.alt,
+                                                    alt: productSearchResult.defaultImage.alt
                                                 }}
                                                 title={productSearchResult.productName}
                                                 price={productPriceState(productSearchResult.price)}
                                                 href={`/products/${productSearchResult.productId}`}
                                             />
-                                        ))
-                                    }
-                                    {productSearch.results.length <= 0 &&
-                                        <h2 className="u-margin-top-lg">No results found.</h2>
-                                    }
-                                </Fragment>
-                                :
-                                <div>
-                                    <SkeletonBlock height="300px" />
-                                </div>
-                            }
-                        </div>
-                        <div className="u-margin-top-lg u-margin-bottom-lg">Tips for getting started on this page:</div>
-                        <ListTile className="pw--instructional-block">
-                            <div>Replace dummy products with real data using Commerce Integrations. <a href="https://docs.mobify.com/progressive-web/latest/">Read the guide</a></div>
-                        </ListTile>
-                        <ListTile className="pw--instructional-block">
-                            <div>Populate the navigation with product categories using the Commerce Integrations. <a href="https://docs.mobify.com/progressive-web/latest/">Read the guide</a></div>
-                        </ListTile>
-                        <ListTile className="pw--instructional-block">
-                            <div>Update core styles and add brand assets such as the company logo. <a href="https://docs.mobify.com/progressive-web/latest/">Read the guide</a></div>
-                        </ListTile>
-                        <div className="u-margin-bottom-lg">View more guides on <a href="https://docs.mobify.com/progressive-web/latest/">docs.mobify.com</a></div>
+                                            {/* PLACE META DATA INFORMATION HERE */}
+                                            {/* Examples are "url", "availability", "productId" etc. */}
+                                            <meta
+                                                itemProp="productID"
+                                                content={productSearchResult.productId}
+                                            />
+                                            <meta
+                                                itemProp="url"
+                                                content={`/products/${
+                                                    productSearchResult.productId
+                                                }`}
+                                            />
+                                        </div>
+                                    ))}
+                                {productSearch.results.length <= 0 && (
+                                    <h2 className="u-margin-top-lg">No results found.</h2>
+                                )}
+                            </Fragment>
+                        ) : (
+                            <Fragment>
+                                {[...new Array(PRODUCT_SKELETON_COUNT)].map((_, idx) => (
+                                    <div key={idx} className="t-example-plp__products-items">
+                                        <SkeletonBlock height="300px" />
+                                    </div>
+                                ))}
+                            </Fragment>
+                        )}
                     </div>
-                </Fragment>
+                    <div className="u-margin-top-lg u-margin-bottom-lg">
+                        Tips for getting started on this page:
+                    </div>
+                    <ListTile className="pw--instructional-block">
+                        <div>
+                            Replace dummy products with real data using Commerce Integrations.&nbsp;
+                            <Link
+                                className="pw--underline"
+                                openInNewTab
+                                href="https://docs.mobify.com/commerce-integrations/latest/"
+                            >
+                                Read the guide
+                            </Link>
+                        </div>
+                    </ListTile>
+                    <div className="u-margin-bottom-lg">
+                        View more guides on&nbsp;
+                        <Link
+                            className="pw--underline"
+                            openInNewTab
+                            href="https://docs.mobify.com/progressive-web/latest/"
+                        >
+                            docs.mobify.com
+                        </Link>
+                    </div>
+                </div>
+            </div>
         )
     }
 }
@@ -139,7 +184,7 @@ const mapStateToProps = createPropsSelector({
     breadcrumb: selectors.getCategoryBreadcrumb,
     category: selectors.getCategory,
     errorMessage: selectors.getErrorMessage,
-    productSearch: selectors.getProductSearch,
+    productSearch: selectors.getProductSearch
 })
 
 const mapDispatchToProps = {
@@ -147,4 +192,8 @@ const mapDispatchToProps = {
     trackPageLoad
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExampleProductList)
+export {ExampleProductList as UnconnectedExampleProductList}
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ExampleProductList)

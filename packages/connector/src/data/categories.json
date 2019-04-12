@@ -1,7 +1,7 @@
 {
     "root": {
         "id": "root",
-        "name": "Storefront Catalog - EN",
+        "name": "Home",
         "categories": [
             {
                 "id": "all",

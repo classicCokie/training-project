@@ -5,6 +5,7 @@
   ],
   "plugins": [
     "transform-object-rest-spread",
+    "react-loadable/babel",
     "transform-object-assign",
     ["transform-runtime", {
       "polyfill": false,

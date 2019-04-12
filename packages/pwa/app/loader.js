@@ -1,13 +1,11 @@
-/* global AJS_SLUG, MESSAGING_SITE_ID, MESSAGING_ENABLED, DEBUG, WEBPACK_NON_PWA_ENABLED, AMP_LINKING_ENABLED */
+/* global AJS_SLUG, DEBUG, AMP_LINKING_ENABLED */
 import {getAssetUrl, loadAsset, initCacheManifest} from 'progressive-web-sdk/dist/asset-utils'
 import {
-    browserSupportsMessaging,
     documentWriteSupported,
     isFirefoxBrowser,
     isSamsungBrowser,
     iOSBrowser,
     loadScript,
-    loadScriptAsPromise,
     preventDesktopSiteFromRendering,
     prefetchLink
 } from 'progressive-web-sdk/dist/utils/utils'
@@ -19,10 +17,6 @@ import {
 } from 'progressive-web-sdk/dist/utils/preview-utils'
 import {displayPreloader} from 'progressive-web-sdk/dist/preloader'
 import cacheHashManifest from '../tmp/loader-cache-hash-manifest.json'
-import {
-    createGlobalMessagingClientInitPromise,
-    loadAndInitMessagingClient
-} from 'progressive-web-sdk/dist/utils/messaging'
 
 import {
     setPerformanceValues,
@@ -54,8 +48,6 @@ import preloadJS from 'raw-loader!./preloader/preload.js'
 
 import {baseAMPUrl, hasAMPPage} from './ampUrls'
 
-const messagingEnabled = MESSAGING_ENABLED
-const nonPwaEnabled = WEBPACK_NON_PWA_ENABLED
 const ampLinkingEnabled = AMP_LINKING_ENABLED
 
 const CAPTURING_CDN = '//cdn.mobify.com/capturejs/capture-latest.min.js'
@@ -69,16 +61,7 @@ const IS_V8_TAG = isV8Tag()
 
 setLoaderDebug(DEBUG || IS_PREVIEW)
 
-// Set this flag according to whether this browser is capable of
-// supporting Messaging. This is a separate check from whether
-// Messaging has been enabled (in package.json).
-const MESSAGING_SUPPORTED = browserSupportsMessaging()
-
 window.Progressive = {
-    Messaging: {
-        enabled: messagingEnabled,
-        supported: MESSAGING_SUPPORTED
-    },
     // This flag is the one true way to identify if PWA is loaded via
     //   window.Progressive && !window.Progressive.PWADisabled
     // We use the negation since this allows backwards comaptibility
@@ -91,7 +74,7 @@ window.Progressive = {
 
 setPerformanceValues()
 
-// Track First Paint and First Contentful Paint for PWA and non-PWA
+// Track First Paint and First Contentful Paint.
 trackFirstPaints()
 
 // Set up the routes and blacklist
@@ -123,79 +106,6 @@ const isSupportedPWABrowser = () => {
         !isSamsungBrowser(ua) &&
         !isFirefoxBrowser(ua)
     )
-}
-
-const MINIMUM_NON_PWA_CHROME = 49
-const MINIMUM_NON_PWA_FIREFOX = 49
-
-/**
- * Returns true if the browser supports the nonPWA client. Note that
- * isSupportedPWABrowser and isSupportedNonPWABrowser *might* both
- * return true for a given browser; support is not mutually exclusive.
- * By default, non-PWA mode will run on Chrome (above
- * a minimum version) and Firefox.
- * @returns {boolean}
- */
-const isSupportedNonPWABrowser = () => {
-    // If service workers are not supported, then we are not a non-pwa
-    // browser, even in preview mode.
-    if (!('serviceWorker' in navigator)) {
-        return false
-    }
-
-    let match = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)
-    if (match && parseInt(match[2], 10) >= MINIMUM_NON_PWA_CHROME) {
-        return true
-    }
-
-    match = navigator.userAgent.match(/Firefox\/([0-9]+)\./)
-    if (match && parseInt(match[1], 10) >= MINIMUM_NON_PWA_FIREFOX) {
-        return true
-    }
-
-    return false
-}
-
-/**
- * Do the preloading preparation for the Messaging client.
- * This includes any work that does not require a network fetch or
- * otherwise slow down initialization.
- *
- * If either messagingEnabled or MESSAGING_SUPPORTED are false,
- * then we don't load the Messaging PWA client. The Messaging
- * service worker code is still included, but won't be configured
- * and will do nothing.
- *
- * @param serviceWorkerSupported {Boolean} true if the service worker
- * has successfully loaded and is ready. False if there was a failure.
- * @param pwaMode {Boolean} passed to the Messaging client initialization.
- * @returns {Promise.<*>} that resolves when the client is loaded and
- * initialized, with the initial messaging state value (from
- * the Messaging client's init()). If messaging is not enabled,
- * returns a Promise that resolves to null (we don't reject because
- * that would lead to console warnings about uncaught rejections)
- */
-const setupMessagingClient = (serviceWorkerSupported, pwaMode) => {
-    if (serviceWorkerSupported) {
-        // We need to create window.Mobify.WebPush.PWAClient
-        // at this point. If a project is configured to use
-        // non-progressive Messaging, it will load the
-        // webpush-client-loader, which will then detect that
-        // window.Mobify.WebPush.PWAClient exists and do nothing.
-        window.Mobify = window.Mobify || {}
-        window.Mobify.WebPush = window.Mobify.WebPush || {}
-        window.Mobify.WebPush.PWAClient = {}
-
-        if (messagingEnabled && MESSAGING_SUPPORTED) {
-            // We know that the service worker is
-            // supported and loaded, and messaging is enabled and supported,
-            // so we can load and initialize the Messaging client, returning
-            // the promise from init().
-            return loadAndInitMessagingClient(DEBUG, MESSAGING_SITE_ID, pwaMode)
-        }
-    }
-
-    return Promise.resolve(null)
 }
 
 let waitForBodyPromise
@@ -298,35 +208,6 @@ const loadPWA = () => {
         rel: 'manifest'
     })
 
-    // Force create the body element in order to render the Preloader. This is necessary
-    // because we load scripts synchronously in order to speed up loading, which
-    // by default would throw them in head, where as we need them in body.
-    if (window.loadScriptsSynchronously) {
-        document.write('<body>')
-    }
-
-    // Display the Preloader to indicate progress to the user.
-    waitForBody().then(() => {
-        if (!window.matchMedia('(display-mode: standalone)').matches) {
-            displayPreloader(preloadCSS, preloadHTML, preloadJS)
-        }
-
-        // Create React mounting target
-        const body = document.getElementsByTagName('body')[0]
-        const reactTarget = document.createElement('div')
-        reactTarget.className = 'react-target'
-        body.appendChild(reactTarget)
-    })
-
-    /**
-     * This must be called before vendor.js is loaded (or before the Webpack
-     * chunk that contains Messaging React components is loaded)
-     *
-     * This creates a Promise: `window.Progressive.MessagingClientInitPromise`
-     * which will be resolved or rejected later by the method `setupMessagingClient`
-     */
-    createGlobalMessagingClientInitPromise(messagingEnabled)
-
     window.loadCriticalScripts = () => {
         // The following scripts are loaded sync via document.write, in order
         // for the browser to increase the priority of these scripts. If the scripts
@@ -381,27 +262,49 @@ const loadPWA = () => {
                         // bit from original desktop. It now has some of our own
                         // assets (e.g. main.css) but they can be safely ignored.
                         window.captureResolve(capture.enabledHTMLString())
+
+                        const plaintextEl = document.querySelector('plaintext')
+                        if (plaintextEl) plaintextEl.remove()
                     })
                 }
             })
         })
     }
 
-    window.loadCriticalScripts()
+    // Force create the body element in order to render the Preloader. This is necessary
+    // because we load scripts synchronously in order to speed up loading, which
+    // by default would throw them in head, where as we need them in body.
+    // Create the react-target element before loading the scripts that need it (e.g. Analytics Manager)
+    if (window.loadScriptsSynchronously) {
+        document.write('<body>')
+        document.write('<div class="react-target"></div>')
+        window.loadCriticalScripts()
+    } else {
+        // If document.write isn't supported or we are not on the V8 tag
+        // wait for the body, then create react-target and loaded critical scripts
+        waitForBody().then(() => {
+            // Display the Preloader to indicate progress to the user.
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                displayPreloader(preloadCSS, preloadHTML, preloadJS)
+            }
+
+            // Create React mounting target
+            const body = document.getElementsByTagName('body')[0]
+            const reactTarget = document.createElement('div')
+            reactTarget.className = 'react-target'
+            body.appendChild(reactTarget)
+            // Load scripts once the body and react-target have been created
+            window.loadCriticalScripts()
+        })
+    }
 
     // Prioritize loading if the service worker to after the window load event.
     window.addEventListener('load', () => {
-        Promise.resolve()
-            .then(() => {
-                return shouldLoadWorker()
-                    ? loadWorker(true, MESSAGING_ENABLED, cacheHashManifest)
-                    : Promise.resolve(false)
-            })
-            .then((serviceWorkerSupported) => {
-                // Start the process of fetching and initializing the
-                // Messaging client, in PWA mode.
-                setupMessagingClient(serviceWorkerSupported, true)
-            })
+        Promise.resolve().then(() => {
+            return shouldLoadWorker()
+                ? loadWorker(true, false, cacheHashManifest)
+                : Promise.resolve(false)
+        })
     })
 
     // Prefetch analytics - it's something that we will be downloading later,
@@ -420,7 +323,7 @@ const loadPWA = () => {
 // element then loads the markup into an iframe and installs the
 // the service worker on the AMP page. This piece of code fetches
 // sw.js configuration, registers it, and then halts execution for the PWA.
-if (preloadSWAmp(true, messagingEnabled, cacheHashManifest)) {
+if (preloadSWAmp(true, false, cacheHashManifest)) {
     loaderLog('Setup SW from AMP')
     // This route will only be hit from AMP pages, and does not
     // require loading the rest of the PWA.
@@ -437,67 +340,6 @@ if (preloadSWAmp(true, messagingEnabled, cacheHashManifest)) {
     ) {
         loaderLog('Starting in PWA mode')
         loadPWA()
-    } else if (nonPwaEnabled && isSupportedNonPWABrowser()) {
-        // In preview mode, we arrive here when IS_PREVIEW_PWA_MODE is
-        // false - the default for preview is to load the PWA, not non-PWA
-        // mode.
-        loaderLog('Starting in nonPWA mode')
-        initCacheManifest(cacheHashManifest)
-        addAMPLinkTags()
-        // This a browser that supports our non-PWA mode, so we can assume that
-        // service workers are supported. Load the worker in non-PWA mode, and
-        // (in parallel) initialize analytics.
-        // We assume that the browsers supporting nonPWA mode do not need any
-        // polyfills. If any are needed, this would be the point to load them.
-
-        // There are a number of steps that we can run simultaneously;
-        // initializing the worker, initializing Analytics and waiting
-        // for the <body> tag to exist.
-        const promises = [
-            triggerSandyAppStartEvent(false, AJS_SLUG, PLATFORMS.NON_PWA),
-            // We're loaded in a script located in <head> but we need to inject
-            // scripts using `loadScript` which places them in <body> - so
-            // we must wait until <body> exists.
-            waitForBody()
-        ]
-
-        if (shouldLoadWorker()) {
-            promises.push(loadWorker(false, messagingEnabled, cacheHashManifest))
-        }
-
-        Promise.all(promises)
-            .then((results) => {
-                loaderLog('Completing setup for nonPWA mode')
-
-                // This is called early so that the Promise is available
-                // to any scripts that need to chain from it. It gets
-                // resolved when setupMessagingClient completes.
-                createGlobalMessagingClientInitPromise(messagingEnabled)
-
-                // Set up the Messaging client integration (we do this after
-                // analytics is set up, so that window.Sandy.instance is
-                // available to Messaging). The serviceWorkerLoadedAndReady
-                // result from loadWorker is available as results[0].
-                // We ignore the Promise returned from this call, since
-                // we want to continue to load and setup the non-pwa
-                // script anyway, whether Messaging succeeds or not.
-                setupMessagingClient(results[0], false).then((state) =>
-                    loaderLog(`Messaging init complete with state ${JSON.stringify(state)}`)
-                )
-
-                // This load will execute in parallel with setup of the
-                // Messaging client.
-                return loadScriptAsPromise({
-                    id: 'mobify-non-pwa-script',
-                    src: getAssetUrl('non-pwa.js'),
-                    // We do nothing if the script fails
-                    rejectOnError: true
-                })
-            })
-            // we reach this point when the Messaging client has been
-            // loaded and initialized, and the non-pwa.js script has
-            // been loaded. We can now init the non-pwa script.
-            .then(() => window.Mobify.NonPWA.init())
     } else {
         // If it's not a supported browser or there is no PWA view for this page,
         // still load a.js to record analytics.

@@ -19,15 +19,29 @@ export const validate = (values) => {
 export const EmailSubscribeForm = ({handleSubmit, onSubmit}) => {
     const labelText = 'Email Address'
     return (
-        <form id={EMAIL_SUBSCRIBE_FORM_NAME} className="c-example-email-subscribe-form" data-analytics-name={EMAIL_SUBSCRIBE_FORM_NAME} onSubmit={handleSubmit(onSubmit)}>
+        <form
+            id={EMAIL_SUBSCRIBE_FORM_NAME}
+            className="c-example-email-subscribe-form"
+            data-analytics-name={EMAIL_SUBSCRIBE_FORM_NAME}
+            onSubmit={handleSubmit(onSubmit)}
+        >
             <FieldRow className="u-flexbox">
-                <ReduxForm.Field component={Field} name="email" label={labelText} className="u-flex">
+                <ReduxForm.Field
+                    component={Field}
+                    name="email"
+                    label={labelText}
+                    className="u-flex"
+                >
                     <input type="email" data-analytics-name="email" className="u-flex" required />
                 </ReduxForm.Field>
 
                 <Field className="c-example-email-subscribe-form__button u-flex-none u-margin-start-0">
-                    <div className="pw-field__label" aria-hidden="true">{labelText}</div>
-                    <Button type="submit" className="pw--primary">Submit</Button>
+                    <div className="pw-field__label" aria-hidden="true">
+                        {labelText}
+                    </div>
+                    <Button type="submit" className="pw--primary">
+                        Submit
+                    </Button>
                 </Field>
             </FieldRow>
         </form>
@@ -40,7 +54,6 @@ EmailSubscribeForm.propTypes = {
     // Handler that is triggers when the form is submitted
     onSubmit: PropTypes.func
 }
-
 
 export default ReduxForm.reduxForm({
     form: EMAIL_SUBSCRIBE_FORM_NAME,

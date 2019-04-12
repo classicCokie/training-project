@@ -1,21 +1,46 @@
 import Immutable from 'immutable'
 import {createSelector} from 'reselect'
 import {createGetSelector} from 'reselect-immutable-helpers'
+import {getRootCategoryId} from './connector'
 
 // Base UI Selectors
 export const getUI = ({ui}) => ui
-export const getGlobals = createSelector(getUI, ({globals}) => globals)
+export const getGlobals = createSelector(
+    getUI,
+    ({globals}) => globals
+)
 export const getPageMetaData = createGetSelector(getGlobals, 'pageMetaData')
-export const getPages = createSelector(getUI, ({pages}) => pages)
-export const getHome = createSelector(getPages, ({home}) => home)
-export const getProductDetails = createSelector(getPages, ({productDetails}) => productDetails)
-export const getProductList = createSelector(getPages, ({productList}) => productList)
+export const getPages = createSelector(
+    getUI,
+    ({pages}) => pages
+)
+export const getHome = createSelector(
+    getPages,
+    ({home}) => home
+)
+export const getProductDetails = createSelector(
+    getPages,
+    ({productDetails}) => productDetails
+)
+export const getProductList = createSelector(
+    getPages,
+    ({productList}) => productList
+)
 
 // Base Data Selectors
 export const getData = ({data}) => data
-export const getCategories = createSelector(getData, ({categories}) => categories)
-export const getProducts = createSelector(getData, ({products}) => products)
-export const getProductSearches = createSelector(getData, ({productSearches}) => productSearches)
+export const getCategories = createSelector(
+    getData,
+    ({categories}) => categories
+)
+export const getProducts = createSelector(
+    getData,
+    ({products}) => products
+)
+export const getProductSearches = createSelector(
+    getData,
+    ({productSearches}) => productSearches
+)
 
 // Offline Selectors
 export const getOffline = ({offline}) => offline
@@ -26,21 +51,24 @@ export const getOfflineModeStartTime = createGetSelector(getOffline, 'startTime'
  * understands.
  *
  */
-const convertCategoryToNode = (category) =>
+export const convertCategoryToNode = (category) =>
     Immutable.fromJS({
         title: category.get('name'),
-        path: category.get('id') === 'root' ? '/' : `/category/${category.get('id')}`,
+        path: category.get('id') === getRootCategoryId() ? '/' : `/category/${category.get('id')}`,
         children: (category.get('categories') || Immutable.List()).map(convertCategoryToNode)
     })
 
 // Navigation Selectors
-export const getNavigationRoot = createSelector(getCategories, (categories) => {
-    const rootCategory = categories.get('root')
+export const getNavigationRoot = createSelector(
+    getCategories,
+    (categories) => {
+        const rootCategory = categories.get(getRootCategoryId())
 
-    return rootCategory
-        ? convertCategoryToNode(rootCategory)
-        : Immutable.fromJS({
-            title: 'root',
-            path: '/'
-        })
-})
+        return rootCategory
+            ? convertCategoryToNode(rootCategory)
+            : Immutable.fromJS({
+                  title: 'root',
+                  path: '/'
+              })
+    }
+)

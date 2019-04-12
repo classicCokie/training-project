@@ -16,6 +16,7 @@ const autoprefixer = require('autoprefixer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const TimeFixPlugin = require('time-fix-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const pkg = require('../package.json')
 
@@ -28,6 +29,7 @@ const development = 'development'
 const modes = [production, development]
 const analyzeBundle = process.env.MOBIFY_ANALYZE === 'true'
 const mode = process.env.NODE_ENV === production ? production : development
+const DEBUG = mode !== production && process.env.DEBUG === 'true'
 
 if (modes.indexOf(mode) < 0) {
     throw new Error(`Mode '${mode}' must be one of '${modes.toString()}'`)
@@ -40,18 +42,27 @@ if (modes.indexOf(mode) < 0) {
 const BuildMarkerPlugin = function() {
     this.fileName = 'build/build.marker'
     this.done = this.done.bind(this)
+    this.compile = this.compile.bind(this)
+    this.inProgress = 0
 }
 
 BuildMarkerPlugin.prototype.apply = function(compiler) {
     if (compiler.hooks) {
         compiler.hooks.done.tap({name: 'BuildMarkerPlugin'}, this.done)
+        compiler.hooks.compile.tap({name: 'BuildMarkerPlugin'}, this.compile)
     } else {
         compiler.plugin('done', this.done)
+        compiler.plugin('compile', this.compile)
     }
 }
 
-BuildMarkerPlugin.prototype.done = function(stats) {
-    if (!stats.hasErrors()) {
+BuildMarkerPlugin.prototype.compile = function() {
+    this.inProgress += 1
+}
+
+BuildMarkerPlugin.prototype.done = function() {
+    this.inProgress -= 1
+    if (!this.inProgress) {
         console.log('All builds complete, touching build marker.')
         fs.closeSync(fs.openSync(this.fileName, 'w'))
     }
@@ -64,6 +75,8 @@ const defines = {
     NATIVE_WEBPACK_ASTRO_VERSION: `'0.0.1'`, // TODO
     AMP_LINKING_ENABLED: `${pkg.ampLinkingEnabled}`,
     MESSAGING_SITE_ID: `'${pkg.messagingSiteId}'`,
+    // This is for internal Mobify test use
+    MOBIFY_CONNECTOR_NAME: `'${process.env.MOBIFY_CONNECTOR_NAME}'`,
     // These are defined as string constants
     PROJECT_SLUG: `'${pkg.projectSlug}'`,
     AJS_SLUG: `'${pkg.aJSSlug}'`,
@@ -72,7 +85,7 @@ const defines = {
     WEBPACK_PACKAGE_JSON_MOBIFY: `${JSON.stringify(pkg.mobify || {})}`,
     WEBPACK_SSR_ENABLED: pkg.mobify ? `${pkg.mobify.ssrEnabled}` : 'false',
     WEBPACK_SITE_URL: `'${pkg.siteUrl}'`,
-    DEBUG: mode !== production,
+    DEBUG,
     WEBPACK_PAGE_NOT_FOUND_URL: `'${(pkg.mobify || {}).pageNotFoundURL || ''}' `
 }
 
@@ -235,6 +248,12 @@ const common = {
                 openAnalyzer: true
             }),
         mode === development && new webpack.NoEmitOnErrorsPlugin(),
+
+        // Avoid repeat builds with webpack for files created immediately
+        // before starting the server, eg. loader-routes.js.
+        // See - https://github.com/webpack/watchpack/issues/25
+        new TimeFixPlugin(),
+
         new BuildMarkerPlugin()
     ].filter((x) => !!x),
 
@@ -271,6 +290,7 @@ const common = {
 
 // The main PWA entry point gets special treatment for chunking
 const main = Object.assign({}, common, {
+    name: 'pwa-main',
     entry: {
         main: './app/main.jsx'
     },
@@ -290,11 +310,10 @@ const main = Object.assign({}, common, {
 })
 
 const others = Object.assign({}, common, {
+    name: 'pwa-others',
     entry: Object.assign(
         {
             loader: './app/loader.js',
-            'non-pwa': './non-pwa/non-pwa.js',
-            'non-pwa-ask': './non-pwa/non-pwa-ask.js',
             worker: './worker/main.js',
             'service-worker-loader': './service-worker-loader.js',
             'ssr-loader': './app/ssr-loader.js',
@@ -318,6 +337,7 @@ const others = Object.assign({}, common, {
 const ssrServerConfig = Object.assign(
     {},
     {
+        name: 'ssr-server',
         mode,
         devtool: 'cheap-source-map', // Always use source map, makes debugging the server much easier.
         entry: './app/ssr.js',
@@ -363,6 +383,28 @@ const ssrServerConfig = Object.assign(
                     use: 'text-loader'
                 }
             ]
+        },
+        stats: {
+            warningsFilter: (warning) => {
+                // DO NOT IGNORE THESE WARNINGS IN OTHER CONFIGS.
+                // We're compiling JSDOM for the server side. It uses dynamic
+                // require() calls which Webpack can't optimize these through
+                // static analysis, so it complains. We don't need to aggressively
+                // optimize server-side bundle sizes though, so we can safely ignore
+                // these warnings.
+                const filesWithKnownDynamicRequires = [
+                    /((.+(progressive-web-sdk)+?)\/node_modules\/node-gyp-build\/index\.js)/,
+                    /((\.\/node_modules\/jsdom|.+(progressive-web-sdk)+?)\/node_modules\/parse5\/lib\/index\.js)/,
+                    /((\.|.+(progressive-web-sdk)+?)\/node_modules\/uncss\/src\/jsdom\.js)/,
+                    /((\.|.+(progressive-web-sdk)+?)\/node_modules\/jsdom\/lib\/jsdom\/utils\.js)/,
+                    /((\.\/node_modules\/progressive-web-sdk|.+(progressive-web-sdk)+?)\/node_modules\/express\/lib\/view\.js)/,
+                    /((\.|.+(progressive-web-sdk)+?)\/node_modules\/encoding\/lib\/iconv-loader\.js)/
+                ]
+
+                return filesWithKnownDynamicRequires.some(
+                    (rx) => rx.test(warning) && /Critical dependency(.|\n)*/.test(warning)
+                )
+            }
         }
     },
     mode === production

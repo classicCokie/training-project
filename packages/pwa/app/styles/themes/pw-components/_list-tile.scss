@@ -4,6 +4,10 @@
     &.pw--instructional-block {
         margin-bottom: $unit*2;
         border: $border;
+
+        .pw-list-tile__primary {
+            background-color: $neutral-00;
+        }
     }
 }
 
@@ -22,7 +26,6 @@
 .pw-list-tile__content {
     padding: $unit $unit*1.5;
 }
-
 
 // Action
 // ---

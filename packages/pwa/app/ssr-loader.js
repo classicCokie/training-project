@@ -3,11 +3,12 @@
  environment for main.js.
  */
 
-/* global MESSAGING_SITE_ID, MESSAGING_ENABLED, DEBUG, AJS_SLUG */
+/* global DEBUG, AJS_SLUG */
 /* eslint import/no-commonjs:0 */
 
 import {applyPolyfills} from 'progressive-web-sdk/dist/ssr/ssr-polyfills'
 import {loadUPWA} from 'progressive-web-sdk/dist/utils/ssr-loader-utils'
+import {getNeededPolyfills} from './utils/polyfills'
 
 // Polyfills - importing them will install them if needed. We always include
 // them, since loading them asynchronously is slow, and unless they're
@@ -20,10 +21,14 @@ import 'whatwg-fetch' // window.fetch
 import 'url-polyfill'
 import 'es6-object-assign/auto' // Object.assign polyfill
 
+const neededPolyfills = getNeededPolyfills()
+neededPolyfills.forEach((polyfill) => {
+    polyfill.load(() => {})
+})
+
 applyPolyfills()
 
 loadUPWA({
     debug: DEBUG,
-    messagingSiteId: MESSAGING_ENABLED ? MESSAGING_SITE_ID : null,
     mobifyPropertyId: AJS_SLUG
 })

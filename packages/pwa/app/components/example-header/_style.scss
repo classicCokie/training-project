@@ -43,16 +43,17 @@
 .c-header__nav-modal {
     position: relative;
 
+    min-height: $header-height;
+
     background-color: $ui-brand-color;
 
-    .u-home-headerbar {
+    .pw-nav-header__slider-container {
         align-items: center;
         width: 100%;
         padding-top: $unit * 1.5;
         padding-bottom: $unit / 2;
         padding-left: $unit * 2;
     }
-
 
     .c-header__nav-modal-mobile {
         justify-content: flex-end;
