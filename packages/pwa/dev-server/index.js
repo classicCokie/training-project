@@ -6,14 +6,16 @@ const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const chalk = require('chalk')
 const ip = require('ip')
+const siteURL = require('./site-url')
 
 const config = require('../webpack/webpack.config.js')
-const pkg = require('../package.json')
 
 const argv = require('minimist')(process.argv.slice(2))
 const port = argv.port || process.env.PORT || 8443
 
-const compiler = webpack(config)
+// only compile the configs necessary for a building client side.
+// currently, that excludes the SSR webpack config.
+const compiler = webpack(config.filter((cfg) => cfg.name !== 'ssr-server'))
 const cert = fs.readFileSync('./dev-server/localhost.pem')
 
 // eslint-disable-next-line no-unused-vars
@@ -27,12 +29,16 @@ const server = new WebpackDevServer(compiler, {
         key: cert
     },
     compress: true,
-    stats: config[0].stats
+    // Since running webpack via the NodeAPI means that reporting and error handling must be done manually,
+    // the stats configs will not be applied to the build output. So, we apply the stats from the 'pwa-main'
+    // webpack config which get its stats configuration from a 'common' webpack config variable used between all
+    // webpack configs except for the SSR config (which we are not compiling here).
+    stats: config.find((cfg) => cfg.name === 'pwa-main').stats
 })
 
 const onStart = () => {
     const divider = chalk.gray('\n-----------------------------------')
-    const encodedUrl = encodeURIComponent(pkg.siteUrl)
+    const encodedUrl = encodeURIComponent(siteURL.getSiteUrl())
     const encodedSiteFolder = encodeURIComponent(`https://localhost:${port}/loader.js`)
 
     console.log(`Server started ${chalk.green('✓')}`)
@@ -64,7 +70,7 @@ const onStart = () => {
     )
 }
 
-server.listen(port, 'localhost', (err) => {
+server.listen(port, '0.0.0.0', (err) => {
     return err && console.error(chalk.red(JSON.stringify(err, null, 4)))
 })
 

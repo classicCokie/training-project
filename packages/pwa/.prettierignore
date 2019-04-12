@@ -1,2 +1,5 @@
 build
+docs
+coverage
 scripts/generator/assets
+app/loader-routes.js

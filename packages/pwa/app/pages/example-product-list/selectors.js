@@ -4,8 +4,9 @@ import stringify from 'json-stable-stringify'
 
 import {getProductList, getCategories, getProductSearches} from '../../selectors'
 
-export const getCategoryId = createSelector(getProductList, (uiState) =>
-    uiState.getIn(['searchRequest', 'filters', 'categoryId'])
+export const getCategoryId = createSelector(
+    getProductList,
+    (uiState) => uiState.getIn(['searchRequest', 'filters', 'categoryId'])
 )
 
 export const getCategory = createSelector(
@@ -16,20 +17,23 @@ export const getCategory = createSelector(
     }
 )
 
-export const getCategoryBreadcrumb = createSelector(getCategory, (category) => {
-    const list = [
-        {
-            text: 'Home',
-            href: '/'
+export const getCategoryBreadcrumb = createSelector(
+    getCategory,
+    (category) => {
+        const list = [
+            {
+                text: 'Home',
+                href: '/'
+            }
+        ]
+        if (category) {
+            list.push({
+                text: category.get('name')
+            })
         }
-    ]
-    if (category) {
-        list.push({
-            text: category.get('name')
-        })
+        return Immutable.fromJS(list)
     }
-    return Immutable.fromJS(list)
-})
+)
 
 export const getProductSearch = createSelector(
     getProductSearches,
@@ -38,6 +42,7 @@ export const getProductSearch = createSelector(
         productSearches.get(stringify(productListUIState.getIn(['searchRequest'])))
 )
 
-export const getErrorMessage = createSelector(getProductList, (productListUIState) =>
-    productListUIState.get('error')
+export const getErrorMessage = createSelector(
+    getProductList,
+    (productListUIState) => productListUIState.get('error')
 )

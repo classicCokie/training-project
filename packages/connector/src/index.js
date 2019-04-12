@@ -1,4 +1,4 @@
-import {MerlinsConnector} from '@mobify/commerce-integrations/dist/connectors/merlins'
+import {ScrapingConnector} from '@mobify/commerce-integrations/dist/connectors/scraping-connector'
 import * as errors from '@mobify/commerce-integrations/dist/errors'
 
 // Third party modules
@@ -22,7 +22,7 @@ const delay = (duration = 500) =>
         }, duration)
     })
 
-export default class StartingPointConnector extends MerlinsConnector {
+export default class StartingPointConnector extends ScrapingConnector {
     // eslint-disable-next-line no-unused-vars
     getCategory(id, opts) {
         const category = categoriesJSON[id]
@@ -51,23 +51,16 @@ export default class StartingPointConnector extends MerlinsConnector {
 
     // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
-        const categoryId = ((searchParams || {}).filters || {}).categoryId
-
-        if (categoryId === 'potions') {
-            // Secret hint that we want to hit Merlins for test purposes.
-            return super.searchProducts(searchParams, opts)
-        } else {
-            return delay().then(() => {
-                const noResults = {
-                    query: searchParams.query,
-                    selectedFilters: searchParams.filters,
-                    results: [],
-                    count: 0,
-                    total: 0,
-                    start: 0,
-                }
-                return productSearchesJSON[stringify(searchParams)] || noResults
-            })
-        }
+        return delay().then(() => {
+            const noResults = {
+                query: searchParams.query,
+                selectedFilters: searchParams.filters,
+                results: [],
+                count: 0,
+                total: 0,
+                start: 0
+            }
+            return productSearchesJSON[stringify(searchParams)] || noResults
+        })
     }
 }

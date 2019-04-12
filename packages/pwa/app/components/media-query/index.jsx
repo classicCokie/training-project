@@ -5,7 +5,6 @@ import {connect} from 'react-redux'
 import * as selectors from './selectors'
 import {createPropsSelector} from 'reselect-immutable-helpers'
 
-
 /**
  * A wrapper around react-responsive's MediaQuery component.
  *
@@ -28,9 +27,10 @@ MediaQuery.propTypes = {
     values: PropTypes.object
 }
 
-const mapStateToProps = (state) => createPropsSelector({
-    isServerSide: selectors.isServerSide,
-    ssrValues: selectors.values
-})
+const mapStateToProps = () =>
+    createPropsSelector({
+        isServerSide: selectors.isServerSide,
+        ssrValues: selectors.values
+    })
 
 export default connect(mapStateToProps)(MediaQuery)

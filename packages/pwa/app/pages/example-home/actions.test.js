@@ -12,21 +12,20 @@ class MockConnector {
     }
 }
 
-const storeFactory = configureStore([
-    thunk.withExtraArgument({connector: new MockConnector()})
-])
+const storeFactory = configureStore([thunk.withExtraArgument({connector: new MockConnector()})])
 
 test(`Home actions`, () => {
     const store = storeFactory({})
     store.dispatch(actions.initializeHome())
-    expect(store.getActions()).toEqual([{
-        payload: {
-            pageMetaData: {
-                description: 'Homepage for the Scaffold',
-                title: 'Scaffold Home',
+    expect(store.getActions()).toEqual([
+        {
+            payload: {
+                pageMetaData: {
+                    description: 'Homepage for the Scaffold',
+                    title: 'Scaffold Home'
+                }
             },
-        },
-        type: 'PAGE_METADATA_RECEIVED',
-    }])
+            type: 'PAGE_METADATA_RECEIVED'
+        }
+    ])
 })
-

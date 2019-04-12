@@ -4,10 +4,7 @@ import {EmailSubscribeForm, validate} from './index'
 
 test('EmailSubscribeForm renders without errors', () => {
     const wrapper = shallow(
-        <EmailSubscribeForm
-            handleSubmit={() => undefined}
-            onSubmit={() => undefined}
-        />
+        <EmailSubscribeForm handleSubmit={() => undefined} onSubmit={() => undefined} />
     )
     expect(wrapper).toHaveLength(1)
     expect(wrapper.hasClass('c-example-email-subscribe-form')).toBe(true)

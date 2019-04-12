@@ -4,33 +4,9 @@ import Immutable from 'immutable'
 import analytics from 'redux-analytics'
 import analyticsManager from 'progressive-web-sdk/dist/analytics/analytics-manager'
 import {runningServerSide} from 'progressive-web-sdk/dist/utils/utils'
-import Connector from "training-project-connector/dist"
 import reducer from './reducer'
 
 const isServerSide = runningServerSide()
-const isUniversal = window.Progressive && window.Progressive.isUniversal
-
-if (!isServerSide) {
-    analyticsManager.init({
-        // eslint-disable-next-line no-undef
-        projectSlug: AJS_SLUG,
-        // eslint-disable-next-line no-undef
-        mobifyGAID: WEBPACK_MOBIFY_GA_ID,
-        ecommerceLibrary: 'ec',
-        // eslint-disable-next-line no-undef
-        debug: DEBUG
-    })
-}
-
-const getConnector = () => {
-    const basePath = isUniversal ? `/mobify/proxy/base` : 'https://www.merlinspotions.com'
-    return Connector.fromConfig({
-        window,
-        basePath,
-        dondeGeoBasePath: 'https://donde-geo-tools.herokuapp.com',
-        dondeApiBasePath: 'https://api.donde.io'
-    })
-}
 
 /**
  * Restore a previously-frozen app state for use as the initial data when building
@@ -49,9 +25,21 @@ export const restoreFromFrozen = (frozen) => {
                         return {
                             [key]: Object.assign(
                                 {},
-                                ...Object.keys(frozen[key]).map((k) => ({
-                                    [k]: Immutable.fromJS(frozen[key][k])
-                                }))
+                                ...Object.keys(frozen[key]).map((k) => {
+                                    switch (k) {
+                                        case 'pages':
+                                            return {
+                                                [k]: Object.assign(
+                                                    {},
+                                                    ...Object.keys(frozen[key][k]).map((k1) => ({
+                                                        [k1]: Immutable.fromJS(frozen[key][k][k1])
+                                                    }))
+                                                )
+                                            }
+                                        default:
+                                            return {[k]: Immutable.fromJS(frozen[key][k])}
+                                    }
+                                })
                             )
                         }
                     default:
@@ -62,10 +50,10 @@ export const restoreFromFrozen = (frozen) => {
     }
 }
 
-const configureStore = () => {
+export const configureStore = (connector) => {
     const initialState = restoreFromFrozen(window.__PRELOADED_STATE__)
 
-    const middlewares = [thunk.withExtraArgument({connector: getConnector()})]
+    const middlewares = [thunk.withExtraArgument({connector})]
 
     if (!isServerSide) {
         middlewares.push(
@@ -81,12 +69,7 @@ const configureStore = () => {
         }) // prettier-ignore
         : compose
 
-    const store = createStore(
-        reducer,
-        initialState,
-        composeEnhancers(applyMiddleware(...middlewares))
-    )
-    return store
+    return createStore(reducer, initialState, composeEnhancers(applyMiddleware(...middlewares)))
 }
 
 export default configureStore

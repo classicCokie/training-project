@@ -9,15 +9,15 @@ import Immutable from 'immutable'
 const storeFactory = configureStore([thunk])
 const initialData = (pageDataImmutable) => ({ui: {pages: {home: pageDataImmutable}}})
 
-
 test('ExampleHome renders without errors', () => {
     const initial = initialData(Immutable.fromJS({}))
     const store = storeFactory(initial)
     const initializeHome = sinon.stub().returns(Promise.resolve())
     const trackPageLoad = sinon.stub()
-    const wrapper = shallow(
-        <ExampleHome />, {context: {store}, disableLifecycleMethods: true}
-    ).dive()
+    const wrapper = shallow(<ExampleHome />, {
+        context: {store},
+        disableLifecycleMethods: true
+    }).dive()
     expect(wrapper.hasClass('t-home')).toBe(true)
     wrapper.setProps({
         initializeHome,

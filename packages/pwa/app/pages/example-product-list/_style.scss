@@ -4,6 +4,7 @@
 // 1. Remove the gutter on the last item
 // 2. To ensure product name and price are top aligned for those with different
 //    image sizes within the same row
+// 3. To clear the nth-child rule for margin-right set the 1n style for hte right margin.
 
 .t-example-plp__container {
     .t-example-plp__container-items {
@@ -20,24 +21,27 @@
     margin-right: gutter();
     margin-bottom: $unit * 2;
 
+    &:nth-child(2n) {
+        margin-right: 0; // 1
+    }
+
     @include susy-breakpoint($medium-breakpoint, $medium-layout) {
         width: span(4);
 
-        &:nth-child(2n) {
-            margin-right: gutter();
+        &:nth-child(1n) {
+            margin-right: gutter(); // 3
         }
 
         &:nth-child(3n) {
             margin-right: 0;
         }
     }
+
     @include susy-breakpoint($large-breakpoint, $large-layout) {
         width: span(3);
-        margin-right: gutter();
 
-        &:nth-child(1n),
-        &:nth-child(3n) {
-            margin-right: gutter();
+        &:nth-child(1n) {
+            margin-right: gutter(); // 3
         }
 
         &:nth-child(4n) {
@@ -45,8 +49,47 @@
         }
     }
 
-    &:nth-child(2n) {
-        margin-right: 0; // 1
+    .pw-tile {
+        display: flex;
+        align-items: center;
+
+        // ProductTile root
+        // ---
+        //
+        // 1. 172px is the minimum predicated height of the tile based on how large the
+        //    images are suppose to be at mobile viewport size. Avoids flash of moving content
+        min-height: $unit * 21.5; // 1
+
+        // ProductTile Image
+        // ---
+        //
+        // 1. This is necessary in order to get the ratio effect to work correctly for
+        //    when the image is showing it's placeholder skeleton.
+        // 2. Override the skeleton-block width and height as the ratio component is not
+        //    easily used with the tile.
+        .pw-image {
+            width: 100%; // 1
+            height: 100%; // 1
+        }
+
+        .pw-skeleton-block {
+            width: 170px !important; //2
+            height: 170px !important; //2
+        }
+
+        @include susy-breakpoint($medium-breakpoint, $medium-layout) {
+            .pw-skeleton-block {
+                width: 237px !important; //2
+                height: 237px !important; //2
+            }
+        }
+
+        @include susy-breakpoint($large-breakpoint, $large-layout) {
+            .pw-skeleton-block {
+                width: 230px !important; //2
+                height: 230px !important; //2
+            }
+        }
     }
 
     .pw-tile__primary {

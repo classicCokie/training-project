@@ -4,8 +4,6 @@ import {createPropsSelector} from 'reselect-immutable-helpers'
 import {getAssetUrl} from 'progressive-web-sdk/dist/asset-utils'
 import Helmet from 'react-helmet'
 import PropTypes from 'prop-types'
-import {runningServerSide} from 'progressive-web-sdk/dist/utils/utils'
-import WebFont from 'webfontloader'
 
 import SkipLinks from 'progressive-web-sdk/dist/components/skip-links'
 
@@ -14,39 +12,54 @@ import {getNavigationRoot, getOfflineModeStartTime, getPageMetaData} from './sel
 import Header from './components/example-header'
 import Footer from './components/example-footer'
 
+export const MetaData = (props) => {
+    const {title, description, keywords} = props
 
-/**
- * Until the day that the `use` element's cross-domain issues are fixed, we are
- * forced to fetch the SVG Sprite's XML as a string and manually inject it into
- * the DOM. See here for details on the issue with `use`:
- * @URL: https://bugs.chromium.org/p/chromium/issues/detail?id=470601
- */
-const fetchSvgSprite = () => {
-    return fetch(getAssetUrl('static/svg/sprite-dist/sprite.svg'))
-        .then((response) => response.text())
-        .then((text) => {
-            const div = document.createElement('div')
-            div.innerHTML = text
-            div.hidden = true
-            document.body.appendChild(div)
-        })
+    return (
+        <Helmet>
+            <html lang="en-US" />
+            {title && <title key="pageMetaTitle">{title}</title>}
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0"
+            />
+            <meta name="charset" content="utf-8" />
+            {description && <meta name="description" content={description} />}
+            {keywords && <meta name="keywords" content={keywords} />}
+            <meta name="theme-color" content="#0288a7" />
+            <meta name="apple-mobile-web-app-title" content="Scaffold" />
+            <meta name="format-detection" content="telephone=no" />
+            <link
+                rel="preconnect"
+                href="https://engagement-collector.mobify.net"
+                crossOrigin="use credentials"
+            />
+            <link
+                rel="preconnect"
+                href="https://www.google-analytics.com"
+                crossOrigin="use credentials"
+            />
+            <link
+                rel="apple-touch-icon"
+                href={getAssetUrl('static/img/global/apple-touch-icon.png')}
+            />
+        </Helmet>
+    )
 }
 
+MetaData.propTypes = {
+    description: PropTypes.string,
+    keywords: PropTypes.string,
+    title: PropTypes.string
+}
 
-class App extends React.Component {
+export const OfflineBanner = () => (
+    <header className="t-app__offline-banner">
+        <p>Currently browsing in offline mode</p>
+    </header>
+)
 
-    componentDidMount() {
-        if (!runningServerSide()) {
-            fetchSvgSprite()
-
-            WebFont.load({
-                google: {
-                    families: ['Oswald:200,400']
-                }
-            })
-        }
-    }
-
+export class App extends React.Component {
     render() {
         const {children, offlineSince, pageMetaData, navigationRoot} = this.props
 
@@ -59,15 +72,12 @@ class App extends React.Component {
         return (
             <div id="app" className="t-app">
                 <MetaData {...pageMetaData} />
-
                 <SkipLinks items={skipLinksItems} />
                 <Header navigationRoot={navigationRoot} />
-
                 {isOffline && <OfflineBanner />}
                 <main id="app-main" className="t-app__main" role="main">
                     {children}
                 </main>
-
                 <Footer />
             </div>
         )
@@ -91,40 +101,4 @@ const mapStateToProps = createPropsSelector({
     navigationRoot: getNavigationRoot
 })
 
-const mapDispatchToProps = {
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
-
-const MetaData = (props) => {
-    const {title, description, keywords} = props
-    return (
-        <Helmet>
-            {title && <title key="pageMetaTitle">{title}</title>}
-
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
-            <meta name="charset" content="utf-8" />
-            {description && <meta name="description" content={description} />}
-            {keywords && <meta name="keywords" content={keywords} />}
-            <meta name="theme-color" content="#0288a7" />
-            <meta name="apple-mobile-web-app-title" content="Scaffold" />
-            <meta name="format-detection" content="telephone=no" />
-
-            <link rel="apple-touch-icon" href={getAssetUrl('static/img/global/apple-touch-icon.png')} />
-        </Helmet>
-    )
-}
-
-MetaData.propTypes = {
-    description: PropTypes.string,
-    keywords: PropTypes.string,
-    title: PropTypes.string
-}
-
-const OfflineBanner = () => {
-    return (
-        <header className="t-app__offline-banner">
-            <p>Currently browsing in offline mode</p>
-        </header>
-    )
-}
+export default connect(mapStateToProps)(App)

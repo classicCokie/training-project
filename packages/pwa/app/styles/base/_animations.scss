@@ -6,10 +6,10 @@
 
 @keyframes background-shimmer {
     0% {
-        transform: translateX(50000%);
+        background-position: 150vw 0;
     }
 
-    to {
-        transform: translateX(-50000%);
+    100% {
+        background-position: -150vw 0;
     }
 }

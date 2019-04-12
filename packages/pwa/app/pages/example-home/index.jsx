@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {createPropsSelector} from 'reselect-immutable-helpers'
 import PropTypes from 'prop-types'
 
+import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
 
 import * as actions from './actions'
@@ -10,7 +11,6 @@ import * as globalSelectors from '../../selectors'
 import {trackPageLoad} from '../../page-actions'
 
 class ExampleHome extends React.Component {
-
     constructor(props) {
         super(props)
         this.pageType = 'home'
@@ -22,24 +22,42 @@ class ExampleHome extends React.Component {
     }
 
     render() {
-
         return (
             <div className="t-home">
                 <h1 className="u-padding-top-md u-margin-bottom-sm">Homepage</h1>
                 <p className="u-margin-bottom-md">Tips for getting started on this page:</p>
                 <ListTile className="pw--instructional-block">
-                    <div>Replace dummy products with real data using Commerce Integrations. <a href="https://docs.mobify.com/progressive-web/latest/">Read the guide</a></div>
+                    <div>
+                        Replace dummy products with real data using Commerce Integrations.&nbsp;
+                        <Link
+                            className="pw--underline"
+                            openInNewTab
+                            href="https://docs.mobify.com/commerce-integrations/latest/"
+                        >
+                            Read the guide
+                        </Link>
+                    </div>
                 </ListTile>
 
                 <ListTile className="pw--instructional-block">
-                    <div>Populate the navigation with product categories using the Commerce Integrations. <a href="https://docs.mobify.com/progressive-web/latest/">Read the guide</a></div>
+                    <div>
+                        Learn more about the grey columns which make up the responsive grid.&nbsp;
+                        <Link
+                            className="pw--underline"
+                            openInNewTab
+                            href="https://docs.mobify.com/progressive-web/latest/guides/responsive-grid/"
+                        >
+                            Read the guide
+                        </Link>
+                    </div>
                 </ListTile>
 
-                <ListTile className="pw--instructional-block">
-                    <div>Update core styles and add brand assets such as the company logo. <a href="https://docs.mobify.com/progressive-web/latest/">Read the guide</a></div>
-                </ListTile>
-
-                <div className="u-padding-bottom-lg">View more guides on <a href="docs.mobify.com">docs.mobify.com</a></div>
+                <div className="u-padding-bottom-lg">
+                    View more guides on&nbsp;
+                    <Link className="pw--underline" openInNewTab href="https://docs.mobify.com">
+                        docs.mobify.com
+                    </Link>
+                </div>
             </div>
         )
     }
@@ -60,4 +78,7 @@ const mapDispatchToProps = {
     initializeHome: actions.initializeHome
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExampleHome)
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ExampleHome)

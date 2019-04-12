@@ -1,17 +1,17 @@
 {
   "name": "Training Project",
   "short_name": "Training Project",
-  "start_url": "https://www.merlinspotions.com/",
+  "start_url": "https://www.example.com/",
   "background_color": "#fff",
   "theme_color": "#000",
   "display": "standalone",
   "icons": [
     {
-      "src": "https://cdn.mobify.com/sites/training-project-web/production/static/img/global/app-icon.png",
+      "src": "https://cdn.mobify.com/sites/training-project/production/static/img/global/app-icon-192.png",
       "sizes": "192x192"
     },
     {
-      "src": "https://cdn.mobify.com/sites/training-project-web/production/static/img/global/app-icon-512.png",
+      "src": "https://cdn.mobify.com/sites/training-project/production/static/img/global/app-icon-512.png",
       "sizes": "512x512"
     }
   ]

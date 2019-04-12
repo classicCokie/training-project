@@ -1,7 +1,3 @@
-/* * *  *  * *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
-/* Copyright (c) 2017 Mobify Research & Development Inc. All rights reserved. */
-/* * *  *  * *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
-
 /**
  * Call requestIdleCallback in supported browsers.
  *
@@ -16,14 +12,14 @@ export const requestIdleCallback = (fn) => {
     }
 }
 
-export const watchOnlineStatus = (callback) => {
+export const watchOnlineStatus = (callback, win = window) => {
     const off = () => callback(false)
     const on = () => callback(true)
-    window.addEventListener('offline', off)
-    window.addEventListener('online', on)
+    win.addEventListener('offline', off)
+    win.addEventListener('online', on)
     const unsubscribe = () => {
-        window.removeEventListener('offline', off)
-        window.removeEventListener('online', on)
+        win.removeEventListener('offline', off)
+        win.removeEventListener('online', on)
     }
     return unsubscribe
 }

@@ -3,17 +3,20 @@
   "version": "0.0.1",
   "description": "",
   "dependencies": {
-    "@mobify/commerce-integrations": "1.0.3"
+    "@mobify/commerce-integrations": "^1.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0"
+    "babel-cli": "^6.26.0",
+    "eslint": "4.19.1",
+    "jest": "22.4.3",
+    "jsdoc": "3.5.5"
   },
   "main": "index.js",
   "scripts": {
-    "build": "rm -R dist; ../../node_modules/.bin/babel src --bail --ignore '*.test.js','test.js' --out-dir dist --copy-files",
-    "start": "npm run build -- --watch",
-    "prepare": "npm run build;",
-    "test": "../../node_modules/.bin/jest"
+    "build": "babel src --bail --ignore '*.test.js','test.js' --out-dir dist --copy-files",
+    "start": "babel src --bail --ignore '*.test.js','test.js' --out-dir dist --copy-files --watch",
+    "prepare": "npm run build",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",

@@ -41,6 +41,26 @@ export const availablePolyfills = [
                 onerror: callback
             })
         }
+    },
+    {
+        // For IE (11 and below), we need to convert window.Event to a function
+        // which is not the supoported behavior in IE by default.
+        test: () => !Event || typeof Event !== 'function',
+        load: (callback) => {
+            window.Event = function(event, params) {
+                if (!event) throw new Error('An Event needs to be passed in')
+                params = {
+                    bubbles: false,
+                    cancelBubble: false,
+                    composed: false,
+                    ...params
+                }
+                const evt = document.createEvent('Event')
+                evt.initEvent(event, params.bubbles, params.cancelable, params.composed)
+                return evt
+            }
+            callback()
+        }
     }
 ]
 

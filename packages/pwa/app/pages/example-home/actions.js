@@ -7,11 +7,13 @@ export const updateHomeUIState = (payload) => ({type: HOME_UI_STATE_RECEIVED, pa
 export const initializeHome = () => (dispatch) => {
     return Promise.all([
         dispatch(initializeApp()),
-        dispatch(pageMetaDataReceived({
-            pageMetaData: {
-                title: 'Scaffold Home',
-                description: 'Homepage for the Scaffold'
-            }
-        }))
+        dispatch(
+            pageMetaDataReceived({
+                pageMetaData: {
+                    title: 'Scaffold Home',
+                    description: 'Homepage for the Scaffold'
+                }
+            })
+        )
     ])
 }

@@ -15,6 +15,10 @@ const BUILD_DIR = path.resolve(CWD, 'build')
 const FAVICON_PATH = path.resolve(CWD, 'build/static/ico/favicon.ico')
 const SSL_FILE_PATH = path.resolve(CWD, './dev-server/localhost.pem')
 
+const assetsInBundle = {
+    '/robots.txt': ['text/plain', 'static/robots.txt']
+}
+
 class ExtendedSSRServer extends SSRServer {
     /**
      * An example request hook. This function is called to allow code to
@@ -96,6 +100,29 @@ class ExtendedSSRServer extends SSRServer {
         }
         */
 
+        const path = Object.keys(assetsInBundle).find(
+            // Use startsWith so that we ignore query parameters
+            (key) => request.path.startsWith(key)
+        )
+
+        if (path) {
+            const [contentType, buildPath] = assetsInBundle[path]
+            response.sendFile(buildPath, {
+                // Directory containing bundle files
+                root: BUILD_DIR,
+                // maxAge for caching (in mS)
+                maxAge:
+                    // local dev server serves a non-cacheable response
+                    // otherwise cache for 24 hours
+                    !options.local ? 0 : 86400 * 1000,
+                // Headers for the response
+                headers: {
+                    'Content-Type': contentType
+                }
+            })
+            return
+        }
+
         // If the path isn't handled by this function, then
         // we just call next() (standard ExpressJS middleware)
         next()
@@ -153,14 +180,14 @@ const server = new ExtendedSSRServer({
     // the mobify.ssrShared section of package.json.
     faviconPath: FAVICON_PATH,
 
-    // This project requires captureJS.
-    loadCaptureJS: true,
+    // Include capture JS inline in HTML responses.
+    loadCaptureJS: false,
 
-    // This project requires JQuery.
-    loadJQuery: true,
+    // Include JQuery inline in HTML responses.
+    loadJQuery: false,
 
     // The location of the apps manifest file relative to the build directory
-    manifestPath: 'static/upwa/manifest.json',
+    manifestPath: 'static/manifest.json',
 
     // This is the value of the 'mobify' object from package.json
     // provided by a webpack DefinePlugin

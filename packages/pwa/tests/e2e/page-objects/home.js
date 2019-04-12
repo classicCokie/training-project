@@ -2,14 +2,16 @@
 /* Copyright (c) 2018 Mobify Research & Development Inc. All rights reserved. */
 /* * *  *  * *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
 const ENV = process.env.NODE_ENV || 'test'
-const SKIP_PREVIEW = (ENV === 'production' || process.env.SKIP_PREVIEW)
-const DEBUG = (false || process.env.DEBUG)
+const SKIP_PREVIEW = ENV === 'production' || process.env.SKIP_PREVIEW
+const DEBUG = false || process.env.DEBUG
 
 const selectors = {
     pwa: '.react-target',
     wrapper: '.t-home',
     emailForm: 'input[type="email"]',
-    menu: '.pw-mega-menu',
+    menu: '.pw-header-bar__actions .pw-button',
+    menuItemLevel1: '.pw-nav-item.pw--has-child div[role=button]',
+    menuItemLevel2: '.pw-nav-item:not(.pw--has-child)',
     menuListItem(index) {
         return `div.pw-mega-menu-item__children > div:nth-child(${index}) div[role='button']`
     },
@@ -17,7 +19,7 @@ const selectors = {
     productListItem(index) {
         return `.t-home__category-item:nth-child(${index}) .pw--is-loaded`
     },
-    copyright: '.qa-footer__copyright',
+    copyright: '.qa-footer__copyright'
 }
 
 const Home = function(browser) {
@@ -44,12 +46,9 @@ Home.prototype.openBrowserToHomepage = function(url) {
     waitForPageToBeReady(this.browser, url)
     if (!SKIP_PREVIEW) {
         console.log('Running preview.')
-        this.browser
-            .preview(url, 'https://localhost:8443/loader.js')
+        this.browser.preview(url, 'https://localhost:8443/loader.js')
     }
-    this.browser
-        .waitForElementVisible(selectors.wrapper)
-        .assert.visible(selectors.wrapper)
+    this.browser.waitForElementVisible(selectors.wrapper).assert.visible(selectors.wrapper)
 }
 
 Home.prototype.closeBrowser = function() {
@@ -61,12 +60,15 @@ Home.prototype.closeBrowser = function() {
     return this
 }
 
-Home.prototype.navigateToProductList = function(PRODUCT_LIST_INDEX) {
-    // Navigate from Home to ProductList
+Home.prototype.navigateToProductList = function() {
+    // Navigate from Home to ProductList page via clicking the menu and the menu items.
     this.browser
-        .log(`Navigating to ProductList number: ${PRODUCT_LIST_INDEX}`)
-        .waitForElementVisible(selectors.menuListItem(PRODUCT_LIST_INDEX))
-        .click(selectors.menuListItem(PRODUCT_LIST_INDEX))
+        .waitForElementVisible(selectors.menu)
+        .click(selectors.menu)
+        .waitForElementVisible(selectors.menuItemLevel1)
+        .click(selectors.menuItemLevel1)
+        .waitForElementVisible(selectors.menuItemLevel2)
+        .click(selectors.menuItemLevel2)
     return this
 }
 
