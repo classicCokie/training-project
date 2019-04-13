@@ -14,7 +14,20 @@
                         "description": "Practical, easy-to-wear styles wherever you're headed."
                     }
                 ]
+            },
+            {
+                "id": "kids",
+                "name": "Kids",
+                "description": "Kid's wear.",
+                "categories": [
+                    {
+                        "id": "kids-tshirts",
+                        "name": "T-Shirts",
+                        "description": "Kids T-Shirts."
+                    }
+                ]
             }
+            
         ]
     }
 }
