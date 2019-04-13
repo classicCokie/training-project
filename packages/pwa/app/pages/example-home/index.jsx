@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 
 import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
+import Banner from 'progressive-web-sdk/dist/components/banner'
 
 import * as actions from './actions'
 import * as globalSelectors from '../../selectors'
@@ -25,6 +26,9 @@ class ExampleHome extends React.Component {
         return (
             <div className="t-home">
                 <h1 className="u-padding-top-md u-margin-bottom-sm">Homepage</h1>
+                    <Banner icon="info" title="info">
+                        Free Shipping on orders over $50
+                    </Banner>
                 <p className="u-margin-bottom-md">Tips for getting started on this page:</p>
                 <ListTile className="pw--instructional-block">
                     <div>
