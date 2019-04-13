@@ -46,7 +46,7 @@
 @import 'node_modules/progressive-web-sdk/dist/components/banner/base';
 
 // [BBB] Progressive Web SDK Custom Styles
-// ---
+@import 'pw-components/banner';
 
 @import 'pw-components/accordion';
 @import 'pw-components/breadcrumbs';
