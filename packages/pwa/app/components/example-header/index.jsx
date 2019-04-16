@@ -17,6 +17,7 @@ import Nav from 'progressive-web-sdk/dist/components/nav/'
 import NavHeader from 'progressive-web-sdk/dist/components/nav-header/'
 import NavMenu from 'progressive-web-sdk/dist/components/nav-menu/'
 import Sheet from 'progressive-web-sdk/dist/components/sheet'
+import SkeletonBlock from 'progressive-web-sdk/dist/components/skeleton-block'
 import MediaQuery from '../media-query'
 
 const breakpoints = getBreakpoints()
@@ -121,14 +122,18 @@ export const DesktopHeader = (props) => {
                 </div>
             </HeaderBar>
 
-            <Nav
-                className="c-header__navigation"
-                root={navigationRoot}
-                path={path}
-                onPathChange={onPathChange}
-            >
-                <MegaMenu className="c-header__navigation-megamenu" />
-            </Nav>
+            {navigationRoot.children ? (
+                <Nav
+                    className="c-header__navigation"
+                    root={navigationRoot}
+                    path={path}
+                    onPathChange={onPathChange}
+                >
+                    <MegaMenu className="c-header__navigation-megamenu" />
+                </Nav>
+            ) : (
+                <SkeletonBlock height="44px" />
+            )}
         </div>
     )
 }
