@@ -17,16 +17,6 @@ childProc.exec('npm -v',
             npm: semver.parse(stdout.trim())
         }
         const errors = []
-        if (!semver.satisfies(found.node, required.node)) {
-            errors.push(
-                `This project requires node version ${required.node.range}, but you're using ` +
-                `${found.node.version}. Please install a compatible node version using NVM (https://github.com/creationix/nvm).`)
-        }
-        if (!semver.satisfies(found.npm, required.npm)) {
-            errors.push(
-                `This project requires npm version ${required.npm.range}, but you're using ` +
-                `${found.npm.version}. Please upgrade your npm version by running: "npm install -g npm@${required.npm.raw}"`)
-        }
 
         if (errors.length > 0) {
             console.error(errors.join('\n'))
