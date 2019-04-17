@@ -1,0 +1,47 @@
+// MyProgressBar
+// ===
+//
+// Component description here
+
+
+// Variables
+// ---
+
+
+// MyProgressBar root
+// ---
+
+.c-my-progress-bar {
+    // Root Class. Contains all core styles, typically for the component's
+    // wrapper element.
+    position: relative;
+    width: 100%;
+    height: $unit*4;
+    background-color: $neutral-40;
+}
+
+
+// Modifiers
+// ---
+//
+.c-my-progress-bar.c--border {
+    border: $border;
+}
+
+
+// Sub components
+// ---
+//
+.c-my-progress-bar__visual-indicator {
+    height: 100%;
+    background-color: $brand-color;
+}
+
+.c-my-progress-bar__text-label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    margin-left: $unit*1;
+    color: $neutral-00;
+    transform: translateY(-50%);
+}
