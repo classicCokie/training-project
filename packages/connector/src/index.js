@@ -51,16 +51,53 @@ export default class StartingPointConnector extends ScrapingConnector {
 
     // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
-        return delay().then(() => {
-            const noResults = {
-                query: searchParams.query,
-                selectedFilters: searchParams.filters,
-                results: [],
-                count: 0,
-                total: 0,
-                start: 0
-            }
-            return productSearchesJSON[stringify(searchParams)] || noResults
-        })
+        // Send the request via the proxy to www.merlinspotions.com/potions.html
+        return this.agent.get('/mobify/proxy/base/potions.html')
+            // Use the utility to transform the HTML
+            // into a document that we can query.
+            .then((res) => this.buildDocument(res))
+            .then((doc) => this.parseSearchProducts(doc, searchParams))
     }
+
+    parseSearchProducts(htmlDoc, searchParams) {
+        const productEls = Array.from(
+            htmlDoc.querySelectorAll('.products.product-items > .product-item')
+        )
+
+        return {
+            query: searchParams.query,
+            selectedFilters: searchParams.filters,
+            results: productEls.map(this.parseProductSearchResult),
+            count: productEls.length,
+            Total: productEls.length,
+            start: 0
+       }
+    }
+
+    parseProductSearchResult(productEl) {
+        const itemInfo = productEl.querySelector('.product-item-info')
+        const productName = itemInfo.querySelector('.product-item-link').innerText
+        
+        const priceBox = itemInfo.querySelector('.price-box')
+        const productId = priceBox.dataset.productId
+        const price = priceBox.querySelector('.price-wrapper').dataset.priceAmount
+
+        const imageEl = productEl.querySelector('.product-image-photo')
+        const defaultImage = {
+           alt: imageEl.getAttribute('alt'),
+           description: imageEl.getAttribute('alt'),
+           src: imageEl.getAttribute('src'),
+           title: imageEl.getAttribute('alt')
+        }
+
+        return {
+            available: true,
+            productName,
+            productId,
+            defaultImage,
+            price,
+            variationProperties: []
+        }
+    }
+
 }
