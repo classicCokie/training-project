@@ -13,7 +13,7 @@
   },
   "mobify": {
     "pageNotFoundURL": "/page-not-found",
-    "ssrEnabled": false,
+    "ssrEnabled": true,
     "ssrOnly": [
       "ssr.js",
       "ssr.js.map",
