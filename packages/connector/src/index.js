@@ -77,7 +77,20 @@ export default class StartingPointConnector extends ScrapingConnector {
     }
 
     parseProductSearchResult(productEl) {
+        // Extract the ProductSearchResult data we need.
+        const idEl = productEl.querySelector('.product-item-photo')
+        const nameEl = productEl.querySelector('.product-item-name')
+        const priceEl = productEl.querySelector('.price-wrapper')
         const imageEl = productEl.querySelector('.product-image-photo')
+
+        // Unavailable/out-of-stock products will not have a ``.price-wrapper`` child.
+        const available = !!priceEl
+        const price = priceEl ? priceEl.dataset.priceAmount : -1
+
+        const productIdMatch = idEl.href.match(/([^/]+)\.html/)
+        const productId = productIdMatch && productIdMatch[1]
+        const productName = nameEl.textContent
+
         const defaultImage = {
             alt: imageEl.getAttribute('alt'),
             description: imageEl.getAttribute('alt'),
@@ -86,12 +99,11 @@ export default class StartingPointConnector extends ScrapingConnector {
         }
 
         return {
-            available: true,
-            productId: '',
-            productName: '',
-            defaultImage: defaultImage,
-            price: 0,
-            rating: 0,
+            available,
+            productId,
+            productName,
+            defaultImage,
+            price,
             variationProperties: []
         }
     }
