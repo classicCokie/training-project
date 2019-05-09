@@ -51,16 +51,48 @@ export default class StartingPointConnector extends ScrapingConnector {
 
     // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
-        return delay().then(() => {
-            const noResults = {
-                query: searchParams.query,
-                selectedFilters: searchParams.filters,
-                results: [],
-                count: 0,
-                total: 0,
-                start: 0
-            }
-            return productSearchesJSON[stringify(searchParams)] || noResults
-        })
+        return this.agent
+            .get('/mobify/proxy/base/potions.html')
+            .then((res) => this.buildDocument(res))
+            .then((doc) => this.parseSearchProducts(doc, searchParams))
+    }
+
+    parseSearchProducts(htmlDoc, searchParams) {
+        const results = this.productSearchResults(htmlDoc)
+
+        return {
+            query: searchParams.query,
+            selectedFilters: searchParams.filters,
+            results: results,
+            count: results.length,
+            total: results.length,
+            start: 0
+        }
+    }
+
+    productSearchResults(htmlDoc) {
+        // Spread the NodeList into a real Array so we can use ``map``
+        const productEls = [...htmlDoc.querySelectorAll('.products.product-items > .product-item')]
+        return productEls.map((productEl) => this.parseProductSearchResult(productEl))
+    }
+
+    parseProductSearchResult(productEl) {
+        const imageEl = productEl.querySelector('.product-image-photo')
+        const defaultImage = {
+            alt: imageEl.getAttribute('alt'),
+            description: imageEl.getAttribute('alt'),
+            src: imageEl.getAttribute('src'),
+            title: imageEl.getAttribute('alt')
+        }
+
+        return {
+            available: true,
+            productId: '',
+            productName: '',
+            defaultImage: defaultImage,
+            price: 0,
+            rating: 0,
+            variationProperties: []
+        }
     }
 }
