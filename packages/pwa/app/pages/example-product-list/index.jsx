@@ -55,7 +55,7 @@ class ExampleProductList extends React.Component {
         if (props === null) {
             return {}
         } else {
-            const {categoryId, pageIndex} = props.params || {}
+            const {categoryId, pageIndex = 1} = props.params || {}
             return {filters: {categoryId, pageIndex}, query: ''}
         }
     }
@@ -143,15 +143,16 @@ class ExampleProductList extends React.Component {
                             </Fragment>
                         )}
                     </div>
-                    <Pagination
-                        currentPage={5}
-                        pageCount={5}
-                        showCurrentPageMessage={false}
-                        onChange={() => {
-                            // TODO
-                            // browserHistory.push('/category/books')
-                        }}
-                    />
+                    {contentsLoaded && (
+                        <Pagination
+                            currentPage={productSearch.selectedFilters.pageIndex}
+                            pageCount={productSearch.totalPages}
+                            showCurrentPageMessage={false}
+                            onChange={(newPage) => {
+                                browserHistory.push(`/category/${category.id}/${newPage}`)
+                            }}
+                        />
+                    )}
                 </div>
             </div>
         )
