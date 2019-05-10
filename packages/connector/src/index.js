@@ -51,21 +51,25 @@ export default class StartingPointConnector extends ScrapingConnector {
 
     // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
+        const {categoryId, pageIndex = 1} = searchParams.filters
+
+        // Send the request via the proxy
         return this.agent
-            .get('/mobify/proxy/base/potions.html')
+            .get(`/mobify/proxy/base/${categoryId}.html?p=${pageIndex}`)
             .then((res) => this.buildDocument(res))
             .then((doc) => this.parseSearchProducts(doc, searchParams))
     }
 
     parseSearchProducts(htmlDoc, searchParams) {
+        const totalEl = htmlDoc.querySelector('.toolbar-products .toolbar-number')
         const results = this.productSearchResults(htmlDoc)
 
         return {
             query: searchParams.query,
             selectedFilters: searchParams.filters,
-            results: results,
+            results,
             count: results.length,
-            total: results.length,
+            total: totalEl ? parseInt(totalEl.textContent) : 0,
             start: 0
         }
     }

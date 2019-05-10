@@ -18,9 +18,12 @@ import Breadcrumbs from 'progressive-web-sdk/dist/components/breadcrumbs'
 import Divider from 'progressive-web-sdk/dist/components/divider'
 import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
+import Pagination from 'progressive-web-sdk/dist/components/pagination'
 import Tile from 'progressive-web-sdk/dist/components/tile'
 import SkeletonBlock from 'progressive-web-sdk/dist/components/skeleton-block'
 import SkeletonText from 'progressive-web-sdk/dist/components/skeleton-text'
+
+import {browserHistory} from 'progressive-web-sdk/dist/routing'
 
 const breakpoints = getBreakpoints()
 const PRODUCT_SKELETON_COUNT = 6
@@ -52,8 +55,8 @@ class ExampleProductList extends React.Component {
         if (props === null) {
             return {}
         } else {
-            const {categoryId} = props.params || {}
-            return {filters: {categoryId}, query: ''}
+            const {categoryId, pageIndex} = props.params || {}
+            return {filters: {categoryId, pageIndex}, query: ''}
         }
     }
 
@@ -140,31 +143,15 @@ class ExampleProductList extends React.Component {
                             </Fragment>
                         )}
                     </div>
-                    <div className="u-margin-top-lg u-margin-bottom-lg">
-                        Tips for getting started on this page:
-                    </div>
-                    <ListTile className="pw--instructional-block">
-                        <div>
-                            Replace dummy products with real data using Commerce Integrations.&nbsp;
-                            <Link
-                                className="pw--underline"
-                                openInNewTab
-                                href="https://docs.mobify.com/commerce-integrations/latest/"
-                            >
-                                Read the guide
-                            </Link>
-                        </div>
-                    </ListTile>
-                    <div className="u-margin-bottom-lg">
-                        View more guides on&nbsp;
-                        <Link
-                            className="pw--underline"
-                            openInNewTab
-                            href="https://docs.mobify.com/progressive-web/latest/"
-                        >
-                            docs.mobify.com
-                        </Link>
-                    </div>
+                    <Pagination
+                        currentPage={5}
+                        pageCount={5}
+                        showCurrentPageMessage={false}
+                        onChange={() => {
+                            // TODO
+                            // browserHistory.push('/category/books')
+                        }}
+                    />
                 </div>
             </div>
         )

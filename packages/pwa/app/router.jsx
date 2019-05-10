@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Provider} from 'react-redux'
-import {Router as SDKRouter, Route, IndexRoute} from 'progressive-web-sdk/dist/routing'
 import {ssrRenderingCompleted} from 'progressive-web-sdk/dist/utils/universal-utils'
+
+import {Router as SDKRouter, Route, IndexRoute} from 'progressive-web-sdk/dist/routing'
 
 import PageLoader from './components/page-loader'
 import Loadable from 'react-loadable'
@@ -44,7 +45,10 @@ class Router extends React.Component {
                 <SDKRouter>
                     <Route path="/" component={App}>
                         <IndexRoute component={ExampleHome} />
-                        <Route path="category/:categoryId" component={ExampleProductList} />
+                        <Route
+                            path="category/:categoryId(/:pageIndex)"
+                            component={ExampleProductList}
+                        />
                         <Route path="products/:productId" component={ExampleProductDetails} />
                     </Route>
                 </SDKRouter>
