@@ -65,7 +65,7 @@ export default class StartingPointConnector extends ScrapingConnector {
         const amountEl = htmlDoc.querySelector('.limiter-options option[selected]')
         const results = this.productSearchResults(htmlDoc)
 
-        const pageIndex = searchParams.filters.pageIndex
+        const pageIndex = parseInt(searchParams.filters.pageIndex)
         const pageSize = parseInt(amountEl.textContent)
         const totalProducts = totalEl ? parseInt(totalEl.textContent) : 0
         const totalPages = Math.ceil(totalProducts / pageSize)

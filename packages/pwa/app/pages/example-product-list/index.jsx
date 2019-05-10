@@ -145,7 +145,7 @@ class ExampleProductList extends React.Component {
                     </div>
                     {contentsLoaded && (
                         <Pagination
-                            currentPage={productSearch.selectedFilters.pageIndex}
+                            currentPage={parseInt(productSearch.selectedFilters.pageIndex)}
                             pageCount={productSearch.totalPages}
                             showCurrentPageMessage={false}
                             onChange={(newPage) => {
