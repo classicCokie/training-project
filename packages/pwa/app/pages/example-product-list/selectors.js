@@ -1,4 +1,4 @@
-import Immutable from 'immutable'
+import {Map, List, fromJS} from 'immutable'
 import {createSelector} from 'reselect'
 import stringify from 'json-stable-stringify'
 
@@ -31,7 +31,7 @@ export const getCategoryBreadcrumb = createSelector(
                 text: category.get('name')
             })
         }
-        return Immutable.fromJS(list)
+        return fromJS(list)
     }
 )
 
@@ -40,6 +40,21 @@ export const getProductSearch = createSelector(
     getProductList,
     (productSearches, productListUIState) =>
         productSearches.get(stringify(productListUIState.getIn(['searchRequest'])))
+)
+
+export const getProductSearchResults = createSelector(
+    getProductSearch,
+    (productSearches) => {
+        const pages = productSearches ? productSearches.get('pages') : Map()
+        const total = productSearches ? productSearches.get('total') : 0
+
+        // Flatten the separate page results into a single list/array.
+        const results = pages.reduce((accumulator, page) => {
+            return accumulator.concat(page.get('results'))
+        }, List())
+
+        return fromJS({results, total, pages: pages.size})
+    }
 )
 
 export const getErrorMessage = createSelector(

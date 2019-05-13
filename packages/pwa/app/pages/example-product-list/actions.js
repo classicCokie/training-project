@@ -8,7 +8,7 @@ const setPageMetaData = (productSearch) => (dispatch) => {
     return dispatch(
         pageMetaDataReceived({
             pageMetaData: {
-                title: `${productSearch.results.length} results for "${
+                title: `${productSearch.total} results for "${
                     productSearch.selectedFilters.categoryId
                 }"`,
                 keywords: productSearch.query,

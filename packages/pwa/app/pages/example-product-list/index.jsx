@@ -65,7 +65,7 @@ class ExampleProductList extends React.Component {
             return price % 1 === 0 ? (price = `$${price}.00`) : `$${price}`
         }
 
-        const contentsLoaded = !!productSearch
+        const contentsLoaded = productSearch && productSearch.results
 
         return (
             <div className="t-example-product-plp">
@@ -99,10 +99,12 @@ class ExampleProductList extends React.Component {
                             <LazyLoader
                                 currentItemCount={productSearch.results.length}
                                 itemTotal={productSearch.total}
-                                fetchItems={() => {
-                                    const query = this.queryFromProps(this.props)
-                                    return initialize(query, 2)
-                                }}
+                                fetchItems={() =>
+                                    initialize(
+                                        this.queryFromProps(this.props),
+                                        productSearch.pages + 1
+                                    )
+                                }
                             >
                                 {productSearch.results.length > 0 &&
                                     productSearch.results.map((productSearchResult) => (
@@ -167,7 +169,7 @@ const mapStateToProps = createPropsSelector({
     breadcrumb: selectors.getCategoryBreadcrumb,
     category: selectors.getCategory,
     errorMessage: selectors.getErrorMessage,
-    productSearch: selectors.getProductSearch
+    productSearch: selectors.getProductSearchResults
 })
 
 const mapDispatchToProps = {
