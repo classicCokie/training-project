@@ -1,0 +1,31 @@
+
+// Example Email Subscribe Form
+// ===
+//
+// 1. Ensure that button align with input field
+// 2. Override flex style
+
+.c-sort-dropdown-form {
+    .pw-field__inner {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .pw-field__input {
+        flex: 0 1 auto;
+    }
+
+    .pw-field__input select {
+        padding: 0 16px;
+    }
+
+    .pw-field__label {
+        margin-bottom: 0;
+    }
+
+    .pw-field__label-wrap {
+        flex: 0 1 auto;
+        padding: 0 16px;
+    }
+}

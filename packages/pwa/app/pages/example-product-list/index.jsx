@@ -21,6 +21,8 @@ import Tile from 'progressive-web-sdk/dist/components/tile'
 import SkeletonBlock from 'progressive-web-sdk/dist/components/skeleton-block'
 import SkeletonText from 'progressive-web-sdk/dist/components/skeleton-text'
 
+import SortDropdown from '../../components/sort-dropdown'
+
 const breakpoints = getBreakpoints()
 const PRODUCT_SKELETON_COUNT = 6
 
@@ -86,6 +88,9 @@ class ExampleProductList extends React.Component {
                 <MediaQuery minWidth={breakpoints[sizes.LARGE]}>
                     <Divider className="u-margin-bottom-md" />
                 </MediaQuery>
+                <div className="t-example-plp__sorting">
+                    <SortDropdown />
+                </div>
                 <div className="t-example-plp__container">
                     {errorMessage && (
                         <h1 className="u-margin-top-lg u-margin-center t-example-plp__error-msg">
