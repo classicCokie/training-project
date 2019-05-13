@@ -49,9 +49,9 @@ export default class StartingPointConnector extends ScrapingConnector {
         })
     }
 
-    // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
-        const {categoryId, pageIndex} = searchParams.filters
+        const {categoryId} = searchParams.filters
+        const {pageIndex} = opts
 
         // Send the request via the proxy
         return this.agent
@@ -68,7 +68,6 @@ export default class StartingPointConnector extends ScrapingConnector {
         const pageIndex = parseInt(searchParams.filters.pageIndex)
         const pageSize = parseInt(amountEl.textContent)
         const totalProducts = totalEl ? parseInt(totalEl.textContent) : 0
-        const totalPages = Math.ceil(totalProducts / pageSize)
 
         return {
             query: searchParams.query,
@@ -76,8 +75,7 @@ export default class StartingPointConnector extends ScrapingConnector {
             results,
             count: results.length,
             total: totalProducts,
-            start: (pageIndex - 1) * pageSize,
-            totalPages // FIXME: This isn't part of the docs. Find a better way to pass per-page (or even total # of pages) back.
+            start: (pageIndex - 1) * pageSize
         }
     }
 

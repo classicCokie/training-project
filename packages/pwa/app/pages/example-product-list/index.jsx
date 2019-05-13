@@ -16,14 +16,12 @@ import {VIEWPORT_SIZE_NAMES as sizes} from 'progressive-web-sdk/dist/ssr/constan
 
 import Breadcrumbs from 'progressive-web-sdk/dist/components/breadcrumbs'
 import Divider from 'progressive-web-sdk/dist/components/divider'
+import LazyLoader from 'progressive-web-sdk/dist/components/lazy-loader'
 import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
-import Pagination from 'progressive-web-sdk/dist/components/pagination'
 import Tile from 'progressive-web-sdk/dist/components/tile'
 import SkeletonBlock from 'progressive-web-sdk/dist/components/skeleton-block'
 import SkeletonText from 'progressive-web-sdk/dist/components/skeleton-text'
-
-import {browserHistory} from 'progressive-web-sdk/dist/routing'
 
 const breakpoints = getBreakpoints()
 const PRODUCT_SKELETON_COUNT = 6
@@ -55,13 +53,13 @@ class ExampleProductList extends React.Component {
         if (props === null) {
             return {}
         } else {
-            const {categoryId, pageIndex = 1} = props.params || {}
-            return {filters: {categoryId, pageIndex}, query: ''}
+            const {categoryId} = props.params || {}
+            return {filters: {categoryId}, query: ''}
         }
     }
 
     render() {
-        const {breadcrumb, category, errorMessage, productSearch} = this.props
+        const {breadcrumb, category, errorMessage, initialize, productSearch} = this.props
 
         const productPriceState = (price) => {
             return price % 1 === 0 ? (price = `$${price}.00`) : `$${price}`
@@ -98,7 +96,14 @@ class ExampleProductList extends React.Component {
                     )}
                     <div className="t-example-plp__container-items">
                         {contentsLoaded ? (
-                            <Fragment>
+                            <LazyLoader
+                                currentItemCount={productSearch.results.length}
+                                itemTotal={productSearch.total}
+                                fetchItems={() => {
+                                    const query = this.queryFromProps(this.props)
+                                    return initialize(query, 2)
+                                }}
+                            >
                                 {productSearch.results.length > 0 &&
                                     productSearch.results.map((productSearchResult) => (
                                         <div
@@ -132,7 +137,7 @@ class ExampleProductList extends React.Component {
                                 {productSearch.results.length <= 0 && (
                                     <h2 className="u-margin-top-lg">No results found.</h2>
                                 )}
-                            </Fragment>
+                            </LazyLoader>
                         ) : (
                             <Fragment>
                                 {[...new Array(PRODUCT_SKELETON_COUNT)].map((_, idx) => (
@@ -143,16 +148,6 @@ class ExampleProductList extends React.Component {
                             </Fragment>
                         )}
                     </div>
-                    {contentsLoaded && (
-                        <Pagination
-                            currentPage={parseInt(productSearch.selectedFilters.pageIndex)}
-                            pageCount={productSearch.totalPages}
-                            showCurrentPageMessage={false}
-                            onChange={(newPage) => {
-                                browserHistory.push(`/category/${category.id}/${newPage}`)
-                            }}
-                        />
-                    )}
                 </div>
             </div>
         )

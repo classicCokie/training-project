@@ -18,7 +18,7 @@ const setPageMetaData = (productSearch) => (dispatch) => {
     )
 }
 
-export const initialize = (query) => (dispatch) => {
+export const initialize = (query, pageIndex = 1) => (dispatch) => {
     dispatch(
         updateCategoryUIState({
             searchRequest: query,
@@ -26,7 +26,7 @@ export const initialize = (query) => (dispatch) => {
         })
     )
 
-    const searchPromise = dispatch(searchProducts(query)).catch((err) =>
+    const searchPromise = dispatch(searchProducts(query, pageIndex)).catch((err) =>
         dispatch(updateCategoryUIState({error: err.message}))
     )
 

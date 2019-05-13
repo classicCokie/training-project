@@ -86,7 +86,7 @@ export const getProduct = (id, opts) => (dispatch, _, {connector}) =>
         return product
     })
 
-export const searchProducts = (searchParams) => (dispatch, _, {connector}) => {
+export const searchProducts = (searchParams, pageIndex) => (dispatch, _, {connector}) => {
     const resultKey = stringify(searchParams)
 
     // Transform a productSearchResult object into a product object.
@@ -113,7 +113,7 @@ export const searchProducts = (searchParams) => (dispatch, _, {connector}) => {
         return product
     }
 
-    return connector.searchProducts(searchParams).then((productSearch) => {
+    return connector.searchProducts(searchParams, {pageIndex}).then((productSearch) => {
         // Populate the product store, this will help with preloading.
         const accumulator = (acc, curr) => ({
             ...acc,

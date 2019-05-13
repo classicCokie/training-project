@@ -45,10 +45,7 @@ class Router extends React.Component {
                 <SDKRouter>
                     <Route path="/" component={App}>
                         <IndexRoute component={ExampleHome} />
-                        <Route
-                            path="category/:categoryId(/:pageIndex)"
-                            component={ExampleProductList}
-                        />
+                        <Route path="category/:categoryId" component={ExampleProductList} />
                         <Route path="products/:productId" component={ExampleProductDetails} />
                     </Route>
                 </SDKRouter>
