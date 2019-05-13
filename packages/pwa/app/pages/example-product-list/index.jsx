@@ -17,8 +17,6 @@ import {VIEWPORT_SIZE_NAMES as sizes} from 'progressive-web-sdk/dist/ssr/constan
 import Breadcrumbs from 'progressive-web-sdk/dist/components/breadcrumbs'
 import Divider from 'progressive-web-sdk/dist/components/divider'
 import LazyLoader from 'progressive-web-sdk/dist/components/lazy-loader'
-import Link from 'progressive-web-sdk/dist/components/link'
-import ListTile from 'progressive-web-sdk/dist/components/list-tile'
 import Tile from 'progressive-web-sdk/dist/components/tile'
 import SkeletonBlock from 'progressive-web-sdk/dist/components/skeleton-block'
 import SkeletonText from 'progressive-web-sdk/dist/components/skeleton-text'
@@ -94,18 +92,16 @@ class ExampleProductList extends React.Component {
                             {errorMessage}
                         </h1>
                     )}
-                    <div className="t-example-plp__container-items">
-                        {contentsLoaded ? (
-                            <LazyLoader
-                                currentItemCount={productSearch.results.length}
-                                itemTotal={productSearch.total}
-                                fetchItems={() =>
-                                    initialize(
-                                        this.queryFromProps(this.props),
-                                        productSearch.pages + 1
-                                    )
-                                }
-                            >
+                    {contentsLoaded ? (
+                        <LazyLoader
+                            currentItemCount={productSearch.results.length}
+                            itemTotal={productSearch.total}
+                            fetchItems={() =>
+                                initialize(this.queryFromProps(this.props), productSearch.pages + 1)
+                            }
+                            allItemsLoadedMessage={'End of Search Results'}
+                        >
+                            <div className="t-example-plp__container-items">
                                 {productSearch.results.length > 0 &&
                                     productSearch.results.map((productSearchResult) => (
                                         <div
@@ -139,17 +135,17 @@ class ExampleProductList extends React.Component {
                                 {productSearch.results.length <= 0 && (
                                     <h2 className="u-margin-top-lg">No results found.</h2>
                                 )}
-                            </LazyLoader>
-                        ) : (
-                            <Fragment>
-                                {[...new Array(PRODUCT_SKELETON_COUNT)].map((_, idx) => (
-                                    <div key={idx} className="t-example-plp__products-items">
-                                        <SkeletonBlock height="300px" />
-                                    </div>
-                                ))}
-                            </Fragment>
-                        )}
-                    </div>
+                            </div>
+                        </LazyLoader>
+                    ) : (
+                        <div className="t-example-plp__container-items">
+                            {[...new Array(PRODUCT_SKELETON_COUNT)].map((_, idx) => (
+                                <div key={idx} className="t-example-plp__products-items">
+                                    <SkeletonBlock height="300px" />
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         )
