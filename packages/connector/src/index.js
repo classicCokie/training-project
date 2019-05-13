@@ -57,25 +57,28 @@ export default class StartingPointConnector extends ScrapingConnector {
         return this.agent
             .get(`/mobify/proxy/base/${categoryId}.html?p=${pageIndex}`)
             .then((res) => this.buildDocument(res))
-            .then((doc) => this.parseSearchProducts(doc, searchParams))
+            .then((doc) => this.parseSearchProducts(doc, searchParams, pageIndex))
     }
 
-    parseSearchProducts(htmlDoc, searchParams) {
+    parseSearchProducts(htmlDoc, searchParams, pageIndex) {
         const totalEl = htmlDoc.querySelector('.toolbar-products .toolbar-number')
         const amountEl = htmlDoc.querySelector('.limiter-options option[selected]')
         const results = this.productSearchResults(htmlDoc)
 
-        const pageIndex = parseInt(searchParams.filters.pageIndex)
         const pageSize = parseInt(amountEl.textContent)
         const totalProducts = totalEl ? parseInt(totalEl.textContent) : 0
 
         return {
             query: searchParams.query,
             selectedFilters: searchParams.filters,
-            results,
-            count: results.length,
             total: totalProducts,
-            start: (pageIndex - 1) * pageSize
+            pages: {
+                [pageIndex]: {
+                    results,
+                    count: results.length,
+                    start: (pageIndex - 1) * pageSize
+                }
+            }
         }
     }
 
