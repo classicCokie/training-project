@@ -2,7 +2,7 @@ import {Map, List, fromJS} from 'immutable'
 import {createSelector} from 'reselect'
 import stringify from 'json-stable-stringify'
 
-import {getProductList, getCategories, getProductSearches} from '../../selectors'
+import {getProductList, getCategories, getProductSearches, getSortForm} from '../../selectors'
 
 export const getCategoryId = createSelector(
     getProductList,
@@ -55,6 +55,11 @@ export const getProductSearchResults = createSelector(
 
         return fromJS({results, total, pages: pages.size})
     }
+)
+
+export const getSortDropdown = createSelector(
+    getSortForm,
+    ({values}) => values && values.sort
 )
 
 export const getErrorMessage = createSelector(

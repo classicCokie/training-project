@@ -4,7 +4,7 @@ import * as ReduxForm from 'redux-form'
 import Field from 'progressive-web-sdk/dist/components/field'
 import FieldRow from 'progressive-web-sdk/dist/components/field-row'
 
-const SORT_DROPDOWN_FORM_NAME = 'search-sort'
+const SORT_DROPDOWN_FORM_NAME = 'sortForm'
 
 export const SortDropdown = () => {
     const labelText = 'Sort By'
@@ -23,9 +23,9 @@ export const SortDropdown = () => {
                     className="u-flex"
                 >
                     <select>
-                        <option>Position</option>
-                        <option>Name</option>
-                        <option>Price</option>
+                        <option value="position">Position</option>
+                        <option value="name">Name</option>
+                        <option value="price">Price</option>
                     </select>
                 </ReduxForm.Field>
             </FieldRow>
@@ -34,5 +34,8 @@ export const SortDropdown = () => {
 }
 
 export default ReduxForm.reduxForm({
-    form: SORT_DROPDOWN_FORM_NAME
+    form: SORT_DROPDOWN_FORM_NAME,
+    initialValues: {
+        sort: 'position'
+    }
 })(SortDropdown)

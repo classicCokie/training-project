@@ -42,6 +42,13 @@ export const getProductSearches = createSelector(
     ({productSearches}) => productSearches
 )
 
+// Form Selectors
+export const getForm = ({form}) => form
+export const getSortForm = createSelector(
+    getForm,
+    ({sortForm}) => sortForm || {}
+)
+
 // Offline Selectors
 export const getOffline = ({offline}) => offline
 export const getOfflineModeStartTime = createGetSelector(getOffline, 'startTime')

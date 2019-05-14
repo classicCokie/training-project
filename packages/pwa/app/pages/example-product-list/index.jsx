@@ -54,7 +54,7 @@ class ExampleProductList extends React.Component {
             return {}
         } else {
             const {categoryId} = props.params || {}
-            return {filters: {categoryId}, query: ''}
+            return {filters: {categoryId}, query: '', sort: props.sortDropdown}
         }
     }
 
@@ -170,7 +170,8 @@ const mapStateToProps = createPropsSelector({
     breadcrumb: selectors.getCategoryBreadcrumb,
     category: selectors.getCategory,
     errorMessage: selectors.getErrorMessage,
-    productSearch: selectors.getProductSearchResults
+    productSearch: selectors.getProductSearchResults,
+    sortDropdown: selectors.getSortDropdown
 })
 
 const mapDispatchToProps = {
