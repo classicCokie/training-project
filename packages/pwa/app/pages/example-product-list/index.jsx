@@ -43,6 +43,7 @@ class ExampleProductList extends React.Component {
         const query = this.queryFromProps(this.props)
         if (stringify(oldQuery) !== stringify(query)) {
             trackPageLoad(initialize(query), this.pageType)
+            this.refs.lazyLoader.reset()
         }
     }
 
@@ -54,7 +55,8 @@ class ExampleProductList extends React.Component {
             return {}
         } else {
             const {categoryId} = props.params || {}
-            return {filters: {categoryId}, query: '', sort: props.sortDropdown}
+            const sort = props.sortDropdown || 'position'
+            return {filters: {categoryId}, query: '', sort}
         }
     }
 
@@ -99,6 +101,7 @@ class ExampleProductList extends React.Component {
                     )}
                     {contentsLoaded ? (
                         <LazyLoader
+                            ref={'lazyLoader'}
                             currentItemCount={productSearch.results.length}
                             itemTotal={productSearch.total}
                             fetchItems={() =>

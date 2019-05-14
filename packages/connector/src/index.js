@@ -49,13 +49,16 @@ export default class StartingPointConnector extends ScrapingConnector {
         })
     }
 
-    searchProducts(searchParams, opts) {
-        const {categoryId} = searchParams.filters
-        const {pageIndex} = opts
+    searchProducts(searchParams, {pageIndex}) {
+        const {filters, sort} = searchParams
+        const {categoryId} = filters
+
+        // Construct the request URL
+        const url = `/mobify/proxy/base/${categoryId}.html?p=${pageIndex}&product_list_order=${sort}`
 
         // Send the request via the proxy
         return this.agent
-            .get(`/mobify/proxy/base/${categoryId}.html?p=${pageIndex}`)
+            .get(url)
             .then((res) => this.buildDocument(res))
             .then((doc) => this.parseSearchProducts(doc, searchParams, pageIndex))
     }

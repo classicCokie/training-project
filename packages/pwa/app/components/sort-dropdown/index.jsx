@@ -34,8 +34,5 @@ export const SortDropdown = () => {
 }
 
 export default ReduxForm.reduxForm({
-    form: SORT_DROPDOWN_FORM_NAME,
-    initialValues: {
-        sort: 'position'
-    }
+    form: SORT_DROPDOWN_FORM_NAME
 })(SortDropdown)
