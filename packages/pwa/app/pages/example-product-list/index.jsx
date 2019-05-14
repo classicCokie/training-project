@@ -43,8 +43,11 @@ class ExampleProductList extends React.Component {
         const query = this.queryFromProps(this.props)
         if (stringify(oldQuery) !== stringify(query)) {
             trackPageLoad(initialize(query), this.pageType)
-            this.refs.lazyLoader.reset()
         }
+    }
+
+    componentWillReceiveProps() {
+        this.refs.lazyLoader.reset()
     }
 
     /**
@@ -104,9 +107,15 @@ class ExampleProductList extends React.Component {
                             ref={'lazyLoader'}
                             currentItemCount={productSearch.results.length}
                             itemTotal={productSearch.total}
-                            fetchItems={() =>
-                                initialize(this.queryFromProps(this.props), productSearch.pages + 1)
-                            }
+                            fetchItems={() => {
+                                debugger
+                                return initialize(
+                                    this.queryFromProps(this.props),
+                                    productSearch.pages + 1
+                                )
+                            }}
+                            /*    initialize(this.queryFromProps(this.props), productSearch.pages + 1)
+                            }*/
                             allItemsLoadedMessage={'End of Search Results'}
                         >
                             <div className="t-example-plp__container-items">
