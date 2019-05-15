@@ -51,8 +51,11 @@ export default class StartingPointConnector extends ScrapingConnector {
 
     // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
-        // Send the request via the proxy to www.merlinspotions.com/potions.html
-        return this.agent.get('/mobify/proxy/base/potions.html')
+        const {filters} = searchParams
+        const {categoryId} = filters
+
+        // Send the request via the proxy
+        return this.agent.get(`/mobify/proxy/base/${categoryId}.html`)
             // Transform the HTML into a document that we can query.
             .then((res) => this.buildDocument(res))
             .then((doc) => this.parseSearchProducts(doc, searchParams))
