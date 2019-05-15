@@ -53,27 +53,9 @@ you need to build your frontends. It includes:
 ├── packages/connector              # The Commerce Integrations connector
 ```
 
-## Requirements
+## Installation
 
-```
-  node@v8.10.0
-  npm@v5.7.1
-```
-
-## Setup
-
-Behind the scenes we're using [Lerna][lerna] to manage the monorepo. This lets us
-install all your dependencies in one single command:
-
-```bash
-  npm ci
-```
-
-You'll need to re-run this command every now and then, if your packages dependencies
-change.
-
-Once you've installed your dependencies, see `packages/pwa/README.md` to learn how
-to get started building and running your PWA.
+See our [Getting Started](https://docs.mobify.com/progressive-web/latest/getting-started/) guide for the latest installation instructions.
 
 ## Linting
 
