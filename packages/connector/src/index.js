@@ -77,7 +77,7 @@ export default class StartingPointConnector extends ScrapingConnector {
             count: results.length,
             total: totalProducts,
             start: (pageIndex - 1) * pageSize,
-            totalPages // FIXME: This isn't part of the docs. Find a better way to pass per-page (or even total # of pages) back.
+            totalPages // EXTENDED: This isn't defined in the interface.
         }
     }
 
