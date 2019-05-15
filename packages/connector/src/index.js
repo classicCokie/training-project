@@ -51,16 +51,58 @@ export default class StartingPointConnector extends ScrapingConnector {
 
     // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
-        return delay().then(() => {
-            const noResults = {
-                query: searchParams.query,
-                selectedFilters: searchParams.filters,
-                results: [],
-                count: 0,
-                total: 0,
-                start: 0
-            }
-            return productSearchesJSON[stringify(searchParams)] || noResults
-        })
+        // Send the request via the proxy to www.merlinspotions.com/potions.html
+        return this.agent.get('/mobify/proxy/base/potions.html')
+            // Transform the HTML into a document that we can query.
+            .then((res) => this.buildDocument(res))
+            .then((doc) => this.parseSearchProducts(doc, searchParams))
+     }
+
+    parseSearchProducts(htmlDoc, searchParams) {
+        const results = this.productSearchResults(htmlDoc)
+        
+        return {
+            query: searchParams.query,
+            selectedFilters: searchParams.filters,
+            results: results,
+            count: results.length,
+            total: results.length,
+            start: 0
+        }
     }
+
+    productSearchResults(htmlDoc) {
+        // Spread the NodeList into a real Array so we can use ``map``
+        const productEls = [...htmlDoc.querySelectorAll('.products.product-items > .product-item')]
+        return productEls.map((productEl) => this.parseProductSearchResult(productEl))
+    }
+     
+    parseProductSearchResult(productEl) {
+        // Extract the ProductSearchResult data we need.
+        const idEl = productEl.querySelector('.product-item-photo')
+        const nameEl = productEl.querySelector('.product-item-name')
+        const priceEl = productEl.querySelector('.price-wrapper')
+        const imageEl = productEl.querySelector('.product-image-photo')
+        const available = !!priceEl
+        const price = priceEl ? priceEl.dataset.priceAmount : -1
+        const productIdMatch = idEl.href.match(/([^/]+)\.html/)
+        const productId = productIdMatch && productIdMatch[1]
+        const productName = nameEl.textContent
+        const defaultImage = {
+            alt: imageEl.getAttribute('alt'),
+            description: imageEl.getAttribute('alt'),
+            src: imageEl.getAttribute('src'),
+            title: imageEl.getAttribute('alt')
+        }
+        
+        return {
+            available,
+            productId,
+            productName,
+            defaultImage,
+            price,
+            variationProperties: []
+        }
+    }
+ 
 }
