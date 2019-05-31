@@ -1,10 +1,10 @@
 {
-  "name": "training-project",
+  "name": "nexum-proof-of-concept",
   "version": "0.0.1",
   "siteName": "Training Project",
   "siteUrl": "https://www.merlinspotions.com/",
-  "projectSlug": "training-project",
-  "aJSSlug": "training-project",
+  "projectSlug": "nexum-proof-of-concept",
+  "aJSSlug": "nexum-proof-of-concept",
   "mobifyGAID": "ID-1234",
   "license": "See license in LICENSE",
   "private": true,
