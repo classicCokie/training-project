@@ -38,6 +38,7 @@
     },
     "scripts": {
         "start": "npm start --prefix packages/pwa",
+        "preinstall": "node ./scripts/check-version.js",
         "postinstall": "node ./scripts/bootstrap.js",
         "lerna": "lerna",
         "pretest": "npm run lint",
