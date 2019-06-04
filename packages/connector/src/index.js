@@ -1,13 +1,9 @@
 import {ScrapingConnector} from '@mobify/commerce-integrations/dist/connectors/scraping-connector'
 import * as errors from '@mobify/commerce-integrations/dist/errors'
 
-// Third party modules
-import stringify from 'json-stable-stringify'
-
 // Sample Data
 import categoriesJSON from './data/categories.json'
 import productsJSON from './data/products.json'
-import productSearchesJSON from './data/product-searches.json'
 
 /**
  * Create a promise that will resolve in a given number of milliseconds.
@@ -51,16 +47,37 @@ export default class StartingPointConnector extends ScrapingConnector {
 
     // eslint-disable-next-line no-unused-vars
     searchProducts(searchParams, opts) {
-        return delay().then(() => {
-            const noResults = {
-                query: searchParams.query,
-                selectedFilters: searchParams.filters,
-                results: [],
-                count: 0,
-                total: 0,
-                start: 0
-            }
-            return productSearchesJSON[stringify(searchParams)] || noResults
-        })
+        return this.agent
+            .set('Authorization', 'apikey="22938e42-93dd-493e-9dd4-eef8206262b8"')
+            .get('/mobify/proxy/base/rest/ContentHub/promotions')
+            .then((res) => this.parseSearchProducts(res.body, searchParams))
+    }
+
+    parseSearchProducts(json, searchParams) {
+        const results = this.productSearchResults(json)
+
+        return {
+            query: searchParams.query,
+            selectedFilters: searchParams.filters,
+            results: results,
+            count: results.length,
+            total: results.length,
+            start: 0
+        }
+    }
+
+    productSearchResults(json) {
+        return json['_embedded']['rh:doc'].map((prom) => this.parseProductSearchResult(prom))
+    }
+
+    parseProductSearchResult(promotion) {
+        return {
+            available: true,
+            productId: promotion.fs_id,
+            productName: promotion.fs_id,
+            defaultImage: `/mobify/proxy/base/rest${promotion.picture_portrait}/binary`,
+            price: 0,
+            variationProperties: []
+        }
     }
 }
