@@ -71,11 +71,17 @@ export default class StartingPointConnector extends ScrapingConnector {
     }
 
     parseProductSearchResult(promotion) {
+        const src = `/mobify/proxy/base/rest${promotion.picture_portrait}/binary`
+        const alt = promotion.headline_without_format || ''
+
         return {
             available: true,
             productId: promotion.fs_id,
             productName: promotion.fs_id,
-            defaultImage: `/mobify/proxy/base/rest${promotion.picture_portrait}/binary`,
+            defaultImage: {
+                src,
+                alt
+            },
             price: 0,
             variationProperties: []
         }
