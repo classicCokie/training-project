@@ -109,7 +109,6 @@ class ExampleProductList extends React.Component {
                                                     alt: productSearchResult.defaultImage.alt
                                                 }}
                                                 title={productSearchResult.productName}
-                                                price={productPriceState(productSearchResult.price)}
                                                 href={`/products/${productSearchResult.productId}`}
                                             />
                                             {/* PLACE META DATA INFORMATION HERE */}

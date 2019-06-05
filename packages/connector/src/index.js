@@ -1,9 +1,7 @@
 import {ScrapingConnector} from '@mobify/commerce-integrations/dist/connectors/scraping-connector'
 import * as errors from '@mobify/commerce-integrations/dist/errors'
-
 // Sample Data
 import categoriesJSON from './data/categories.json'
-import productsJSON from './data/products.json'
 
 /**
  * Create a promise that will resolve in a given number of milliseconds.
@@ -34,22 +32,46 @@ export default class StartingPointConnector extends ScrapingConnector {
 
     // eslint-disable-next-line no-unused-vars
     getProduct(id, opts) {
-        const product = productsJSON[id]
+        const categoryId = id.match(/^(\w+?)_/i)[1]
 
-        return delay().then(() => {
-            if (!product) {
-                throw new errors.NotFoundError('Product Not Found')
-            }
+        return this.agent
+            .set('Authorization', 'apikey="22938e42-93dd-493e-9dd4-eef8206262b8"')
+            .get(`/mobify/proxy/base/rest/ContentHub/${categoryId}/${id}`)
+            .then((res) => res.body)
+            .then((json) => {
+                const src = `/mobify/proxy/base/rest${json.picture_portrait}/binary`
+                const headline = json.headline_without_format || 'Promotion'
 
-            return product
-        })
+                return {
+                    id,
+                    categoryId,
+                    name: headline,
+                    description: json.description,
+                    imageSets: [
+                        {
+                            sizeType: 'large',
+                            images: [
+                                {
+                                    alt: headline,
+                                    description: headline,
+                                    title: headline,
+                                    src
+                                }
+                            ]
+                        }
+                    ]
+                }
+            })
     }
 
     // eslint-disable-next-line no-unused-vars
-    searchProducts(searchParams, opts) {
+    searchProducts(searchParams) {
+        const {filters} = searchParams
+        const {categoryId} = filters
+
         return this.agent
             .set('Authorization', 'apikey="22938e42-93dd-493e-9dd4-eef8206262b8"')
-            .get('/mobify/proxy/base/rest/ContentHub/promotions')
+            .get(`/mobify/proxy/base/rest/ContentHub/${categoryId}`)
             .then((res) => this.parseSearchProducts(res.body, searchParams))
     }
 
@@ -57,9 +79,9 @@ export default class StartingPointConnector extends ScrapingConnector {
         const results = this.productSearchResults(json)
 
         return {
+            results,
             query: searchParams.query,
             selectedFilters: searchParams.filters,
-            results: results,
             count: results.length,
             total: results.length,
             start: 0
@@ -67,23 +89,22 @@ export default class StartingPointConnector extends ScrapingConnector {
     }
 
     productSearchResults(json) {
-        return json['_embedded']['rh:doc'].map((prom) => this.parseProductSearchResult(prom))
+        return json['_embedded']['rh:doc']
+            .filter((_, i) => i % 2 !== 0) // filter out the repeated values without titles
+            .map((prom) => this.parseProductSearchResult(prom)) // parse the each product
     }
 
     parseProductSearchResult(promotion) {
         const src = `/mobify/proxy/base/rest${promotion.picture_portrait}/binary`
-        const alt = promotion.headline_without_format || ''
+        const headline = promotion.headline_without_format || 'Promotion'
 
         return {
-            available: true,
             productId: promotion.fs_id,
-            productName: promotion.fs_id,
+            productName: headline,
             defaultImage: {
                 src,
-                alt
-            },
-            price: 0,
-            variationProperties: []
+                alt: headline
+            }
         }
     }
 }

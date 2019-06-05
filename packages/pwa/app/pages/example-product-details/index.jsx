@@ -118,7 +118,7 @@ class ExampleProductDetails extends React.Component {
 
     render() {
         const {errorMessage, product, uiState, updateUIState} = this.props
-        const {name, price, variationProperties} = product || {}
+        const {name, description, variationProperties} = product || {}
         const {isShippingSheetOpen, isSubscribed, variationValues} = uiState
 
         const breadcrumb = [
@@ -193,12 +193,13 @@ class ExampleProductDetails extends React.Component {
                                     <SkeletonBlock width="50%" height="32px" />
                                 )}
 
-                                {price ? (
-                                    <span className="t-example-product-details__price">
-                                        <Price current={`$${price}`} />
-                                    </span>
+                                {description ? (
+                                    <div
+                                        style={{paddingTop: '50px'}}
+                                        dangerouslySetInnerHTML={{__html: description}}
+                                    />
                                 ) : (
-                                    <SkeletonBlock width="25%" height="32px" />
+                                    <SkeletonBlock width="100%" height="300px" />
                                 )}
                             </div>
 

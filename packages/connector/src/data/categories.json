@@ -6,12 +6,12 @@
             {
                 "id": "all",
                 "name": "All",
-                "description": "Hard-wearing boots, jackets and clothing for unbeatable comfort day in, day out. Practical, easy-to-wear styles wherever you're headed.",
+                "description": "Your root category description goes here",
                 "categories": [
                     {
-                        "id": "tshirts",
-                        "name": "T-Shirts",
-                        "description": "Practical, easy-to-wear styles wherever you're headed."
+                        "id": "promotions",
+                        "name": "Promotions",
+                        "description": "A list of the latest Promotions - fetched from Espirit!"
                     }
                 ]
             }
