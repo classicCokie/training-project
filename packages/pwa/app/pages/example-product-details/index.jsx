@@ -19,7 +19,6 @@ import {
 import Image from 'progressive-web-sdk/dist/components/image'
 import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
-import Price from 'progressive-web-sdk/dist/components/price'
 import Ratio from 'progressive-web-sdk/dist/components/ratio'
 import Sheet from 'progressive-web-sdk/dist/components/sheet'
 import SkeletonBlock from 'progressive-web-sdk/dist/components/skeleton-block'

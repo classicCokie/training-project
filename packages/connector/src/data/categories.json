@@ -4,16 +4,9 @@
         "name": "Home",
         "categories": [
             {
-                "id": "all",
-                "name": "All",
-                "description": "Your root category description goes here",
-                "categories": [
-                    {
-                        "id": "promotions",
-                        "name": "Promotions",
-                        "description": "A list of the latest Promotions - fetched from Espirit!"
-                    }
-                ]
+                "id": "promotions",
+                "name": "Promotions",
+                "description": "A list of the latest Promotions - fetched from e-Spirit!"
             }
         ]
     }
