@@ -191,12 +191,14 @@ class ExampleProductDetails extends React.Component {
                                 ) : (
                                     <SkeletonBlock width="50%" height="32px" />
                                 )}
+                            </div>
 
+                            {/*Product Description*/}
+                            <div className="u-position-relative u-z-index-1 u-padding-bottom-lg u-margin-bottom">
                                 {description ? (
-                                    <div
-                                        style={{paddingTop: '50px'}}
-                                        dangerouslySetInnerHTML={{__html: description}}
-                                    />
+                                    // dangerouslySetInnerHTML use is generally discouraged,
+                                    // but works for the purposes of demonstration in this case
+                                    <div dangerouslySetInnerHTML={{__html: description}} />
                                 ) : (
                                     <SkeletonBlock width="100%" height="300px" />
                                 )}
