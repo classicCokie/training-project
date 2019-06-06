@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 
 import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
-import Button from 'progressive-web-sdk/dist/components/button'
 
 import * as actions from './actions'
 import * as globalSelectors from '../../selectors'
