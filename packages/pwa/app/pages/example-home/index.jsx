@@ -19,6 +19,8 @@ class ExampleHome extends React.Component {
         super(props)
         this.pageType = 'home'
 
+        // We're using a query parameter here,
+        // but you can imagine using the hostname to set the brand on a real site
         const brandMatch = window.location.search.match(/brand=(.)/)
         const brand = brandMatch && brandMatch[1]
         this.props.changeBrand(brand)
