@@ -10,9 +10,11 @@ export const CATEGORIES_RECEIVED = 'CATEGORIES_RECEIVED'
 export const PRODUCTS_RECEIVED = 'PRODUCTS_RECEIVED'
 export const PRODUCT_SEARCH_RECEIVED = 'PRODUCT_SEARCH_RECEIVED'
 export const ONLINE_STATUS_CHANGED = 'ONLINE_STATUS_CHANGED'
+export const CHANGE_BRAND = 'CHANGE_BRAND'
 
 // UI Actions
 export const pageMetaDataReceived = (payload) => ({type: PAGE_METADATA_RECEIVED, payload})
+export const changeBrand = (payload) => ({type: CHANGE_BRAND, payload})
 
 // Data Actions
 export const categoriesReceived = (categories) => ({type: CATEGORIES_RECEIVED, payload: categories})

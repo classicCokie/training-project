@@ -10,6 +10,7 @@ export const getGlobals = createSelector(
     ({globals}) => globals
 )
 export const getPageMetaData = createGetSelector(getGlobals, 'pageMetaData')
+export const getBrand = createGetSelector(getGlobals, 'brand')
 export const getPages = createSelector(
     getUI,
     ({pages}) => pages

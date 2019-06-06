@@ -5,15 +5,23 @@ import PropTypes from 'prop-types'
 
 import Link from 'progressive-web-sdk/dist/components/link'
 import ListTile from 'progressive-web-sdk/dist/components/list-tile'
+import Button from 'progressive-web-sdk/dist/components/button'
 
 import * as actions from './actions'
 import * as globalSelectors from '../../selectors'
 import {trackPageLoad} from '../../page-actions'
+import {changeBrand} from '../../actions'
+
+import BrandedPromo from '../../components/branded-promo'
 
 class ExampleHome extends React.Component {
     constructor(props) {
         super(props)
         this.pageType = 'home'
+
+        const brandMatch = window.location.search.match(/brand=(.)/)
+        const brand = brandMatch && brandMatch[1]
+        this.props.changeBrand(brand)
     }
 
     componentDidMount() {
@@ -25,6 +33,7 @@ class ExampleHome extends React.Component {
         return (
             <div className="t-home">
                 <h1 className="u-padding-top-md u-margin-bottom-sm">Homepage</h1>
+                <BrandedPromo />
                 <p className="u-margin-bottom-md">Tips for getting started on this page:</p>
                 <ListTile className="pw--instructional-block">
                     <div>
@@ -64,6 +73,7 @@ class ExampleHome extends React.Component {
 }
 
 ExampleHome.propTypes = {
+    changeBrand: PropTypes.func,
     initializeHome: PropTypes.func,
     trackPageLoad: PropTypes.func,
     uiState: PropTypes.object
@@ -75,7 +85,8 @@ const mapStateToProps = createPropsSelector({
 
 const mapDispatchToProps = {
     trackPageLoad,
-    initializeHome: actions.initializeHome
+    initializeHome: actions.initializeHome,
+    changeBrand
 }
 
 export default connect(

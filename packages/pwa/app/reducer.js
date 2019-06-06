@@ -13,7 +13,8 @@ import {
     CATEGORIES_RECEIVED,
     PRODUCTS_RECEIVED,
     PRODUCT_SEARCH_RECEIVED,
-    ONLINE_STATUS_CHANGED
+    ONLINE_STATUS_CHANGED,
+    CHANGE_BRAND
 } from './actions'
 
 // Page Reducers
@@ -57,6 +58,8 @@ export const globals = (state = Immutable.Map(), action) => {
             return state.mergeDeep(action.payload)
         case PAGE_METADATA_RECEIVED:
             return state.mergeDeep(action.payload)
+        case CHANGE_BRAND:
+            return state.set('brand', action.payload)
         default:
             return state
     }
