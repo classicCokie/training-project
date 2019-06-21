@@ -31,10 +31,6 @@ steps:
     pwd
     ls
     npm run save-credentials -- --user y.duckwitz@cosnova.com --key Dbxs-hacPNR5DpZeXNDjtizvLp5RrN54sFeAGVkNSdI
+    npm run push -- -m "hallloooo"
   workingDirectory: /home/vsts/work/1/s/packages/pwa
-  displayName: 'Prepare credentials for mobify cloud'
-
-- script: |
-    npm run push -- -m "$(Build.SourceVersionMessage)"
-  workingDirectory: /home/vsts/work/1/s/packages/pwa
-  displayName: 'Pushing bundle to mobify cloud'
+  displayName: 'Push to mobify cloud'
