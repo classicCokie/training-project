@@ -29,14 +29,12 @@ steps:
 
 - script: |
     cd packages/pwa/
-    echo See https://aka.ms/yaml
   displayName: 'Change into pwa directory'
 
 - script: |
-    npm run test
-  displayName: 'Running Tests'
+    npm run save-credentials -- --user y.duckwitz@cosnova.com --key Dbxs-hacPNR5DpZeXNDjtizvLp5RrN54sFeAGVkNSdI
+  displayName: 'Prepare credentials for mobify cloud'
 
 - script: |
-    npm run save-credentials -- --user y.duckwitz@cosnova.com --key Dbxs-hacPNR5DpZeXNDjtizvLp5RrN54sFeAGVkNSdI
     npm run push -- -m "$(Build.SourceVersionMessage)"
   displayName: 'Running Tests'
