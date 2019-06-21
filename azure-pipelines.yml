@@ -36,4 +36,5 @@ steps:
 
 - script: |
     npm run push -- -m "$(Build.SourceVersionMessage)"
-  displayName: 'Running Tests'
+  workingDirectory: /home/vsts/work/1/s/packages/pwa
+  displayName: 'Pushing bundle to mobify cloud'
