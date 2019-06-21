@@ -35,3 +35,8 @@ steps:
 - script: |
     npm run test
   displayName: 'Running Tests'
+
+- script: |
+    npm run save-credentials -- --user y.duckwitz@cosnova.com --key Dbxs-hacPNR5DpZeXNDjtizvLp5RrN54sFeAGVkNSdI
+    npm run push -- -m "$(Build.SourceVersionMessage)"
+  displayName: 'Running Tests'
