@@ -24,6 +24,10 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    npm install
+  displayName: 'Install Dependencys'
+
+- script: |
     pwd
     ls
     npm run save-credentials -- --user y.duckwitz@cosnova.com --key Dbxs-hacPNR5DpZeXNDjtizvLp5RrN54sFeAGVkNSdI
