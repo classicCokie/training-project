@@ -26,3 +26,12 @@ steps:
 - script: |
     npm install
   displayName: 'npm install'
+
+- script: |
+    cd packages/pwa/
+    echo See https://aka.ms/yaml
+  displayName: 'Change into pwa directory'
+
+- script: |
+    npm run test
+  displayName: 'Running Tests'
